@@ -9,6 +9,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class GameInfoPanel extends JPanel{
+	private JLabel serverLabel = new JLabel();
+	Image serverNameImg;
+	
 	private Image unclickedHomeImg = new ImageIcon("src/static/image/elements/unclickedHome.png").getImage().getScaledInstance(35,35,Image.SCALE_SMOOTH);
 	private ImageIcon unclickedHomeIcon = new ImageIcon(unclickedHomeImg);
 	private Image homeImg = new ImageIcon("src/static/image/elements/clickedHome.png").getImage().getScaledInstance(35,35,Image.SCALE_SMOOTH);
@@ -22,27 +25,7 @@ public class GameInfoPanel extends JPanel{
 		setLayout(null);
 		setVisible(true);
 		
-		// 서버 이름 이미지
-		int serverNum = 3;
-		String serverNameImgPath="";
-		switch(serverNum) {
-		case 1:
-			serverNameImgPath = "server1.png";
-			break;
-		case 2:
-			serverNameImgPath = "server2.png";
-			break;
-		case 3:
-			serverNameImgPath = "server3.png";
-			break;
-		}
-		
-		JLabel serverLabel = new JLabel();
 		serverLabel.setBounds(10,10,201,40);
-		Image serverNameImg = new ImageIcon("src/static/image/text/"+serverNameImgPath).getImage().getScaledInstance(serverLabel.getWidth(), serverLabel.getHeight(), Image.SCALE_SMOOTH);		
-		ImageIcon serverNameIcon = new ImageIcon(serverNameImg);
-		serverLabel.setIcon(serverNameIcon);
-		add(serverLabel);
 		
 		// home 버튼
 		homeBtn.setBorderPainted(false);
@@ -75,5 +58,25 @@ public class GameInfoPanel extends JPanel{
 		ChattingPanel chattingPane = new ChattingPanel();
 		chattingPane.setBounds(13,147,chattingPane.getWidth(),chattingPane.getHeight());
 		add(chattingPane);
+	}
+	
+	public void setServerName(int serverNum) { // 서버 이름 이미지 붙이기
+		String serverNameImgPath="";
+		switch(serverNum) {
+		case 1:
+			serverNameImgPath = "server1.png";
+			break;
+		case 2:
+			serverNameImgPath = "server2.png";
+			break;
+		case 3:
+			serverNameImgPath = "server3.png";
+			break;
+		}
+		
+		serverNameImg = new ImageIcon("src/static/image/text/"+serverNameImgPath).getImage().getScaledInstance(serverLabel.getWidth(), serverLabel.getHeight(), Image.SCALE_SMOOTH);		
+		ImageIcon serverNameIcon = new ImageIcon(serverNameImg);
+		serverLabel.setIcon(serverNameIcon);
+		add(serverLabel);
 	}
 }

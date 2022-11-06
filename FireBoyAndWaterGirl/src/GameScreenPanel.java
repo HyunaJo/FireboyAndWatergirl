@@ -22,6 +22,7 @@ public class GameScreenPanel extends JPanel{
 		// 게임 정보 화면(왼쪽) (서버 정보, 홈버튼, 채팅...)
 		GameInfoPanel gameInfoPane = new GameInfoPanel();
 		gameInfoPane.setBounds(gameWaitPane.getWidth(), 0, gameInfoPane.getWidth(), gameInfoPane.getHeight());
+		gameInfoPane.setServerName(2);
 		add(gameInfoPane);
 
 		// 테스트 위해서 임의로 박아둠 //////////
