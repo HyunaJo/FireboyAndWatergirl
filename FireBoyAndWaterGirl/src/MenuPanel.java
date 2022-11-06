@@ -112,8 +112,8 @@ public class MenuPanel extends JPanel{
 				else {				
 					//선택된 서버에 따라 port번호 다르게 지정
 					int port = index * PORT_GAP + BASE_PORT;
-					GameClientFrame.net = new ListenNetwork(port);
-					setNetworkThread(port);
+					GameClientFrame.net = new ListenNetwork(nameTextField.getText(),port);
+					//setNetworkThread(port);
 				}
 			}
 		});
@@ -121,10 +121,10 @@ public class MenuPanel extends JPanel{
 		add(startBtn);
 	} // end of MenuPanel Constructor..
 	
-	public void setNetworkThread(int port) {
-		if (GameClientFrame.net == null)
-			GameClientFrame.net = new ListenNetwork(port);
-	}
+//	public void setNetworkThread(int port) {
+//		if (GameClientFrame.net == null)
+//			GameClientFrame.net = new ListenNetwork(port);
+//	}
 		
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
