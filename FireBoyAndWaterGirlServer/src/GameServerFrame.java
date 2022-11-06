@@ -27,30 +27,22 @@ import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
 
 public class GameServerFrame extends JFrame {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	private int portNumber;
 	private JPanel contentPane;
 	JTextArea textArea;
 	private JTextField txtPortNumber;
 
-	private ServerSocket socket3; // 서버소켓
-	private ServerSocket socket4; // 서버소켓
-	private ServerSocket socket5; // 서버소켓
+	private ServerSocket socket; // 서버소켓
 	
 	private Socket client_socket; // accept() 에서 생성된 client 소켓
 	private static final int BUF_LEN = 128; // Windows 처럼 BUF_LEN 을 정의
 
-
-	/**
-	 * Create the frame.
-	 */
-	public GameServerFrame() {
-	
+	public GameServerFrame(int portNumber) {
+		this.portNumber = portNumber;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 338, 440);
+		setResizable(false);
+		setSize(338, 440);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -69,8 +61,9 @@ public class GameServerFrame extends JFrame {
 		contentPane.add(lblNewLabel);
 
 		txtPortNumber = new JTextField();
+		txtPortNumber.setEditable(false);
 		txtPortNumber.setHorizontalAlignment(SwingConstants.CENTER);
-		txtPortNumber.setText("30000");
+		txtPortNumber.setText(Integer.toString(portNumber));
 		txtPortNumber.setBounds(112, 318, 199, 26);
 		contentPane.add(txtPortNumber);
 		txtPortNumber.setColumns(10);
@@ -79,23 +72,16 @@ public class GameServerFrame extends JFrame {
 		btnServerStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					socket3 = new ServerSocket(30000);
-					socket4 = new ServerSocket(40000);
-					socket5 = new ServerSocket(50000);
+					socket = new ServerSocket(portNumber);
 				} catch (NumberFormatException | IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				AppendText("Chat Server Running..");
 				btnServerStart.setText("Chat Server Running..");
 				btnServerStart.setEnabled(false); // 서버를 더이상 실행시키지 못 하게 막는다
 				txtPortNumber.setEnabled(false); // 더이상 포트번호 수정못 하게 막는다
-				AcceptServer accept_server3 = new AcceptServer(socket3);
-				AcceptServer accept_server4 = new AcceptServer(socket4);
-				AcceptServer accept_server5 = new AcceptServer(socket5);
-				accept_server3.start();
-				accept_server4.start();
-				accept_server5.start();
+				AcceptServer accept_server = new AcceptServer(socket);
+				accept_server.start();
 			}
 		});
 		btnServerStart.setBounds(12, 356, 300, 35);
