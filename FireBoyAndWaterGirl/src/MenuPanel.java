@@ -106,7 +106,8 @@ public class MenuPanel extends JPanel{
 				if (nameTextField.getText().equals("")) {
 					
 					System.out.println("nameTextField is empty");
-					
+					JOptionPane.showMessageDialog(null,"이름을 입력해주세요");
+
 				}
 				else {				
 					//선택된 서버에 따라 port번호 다르게 지정

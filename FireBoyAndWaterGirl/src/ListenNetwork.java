@@ -5,6 +5,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import javax.swing.JOptionPane;
+
 //Server Message를 수신해서 화면에 표시
 public class ListenNetwork extends Thread {
 		String ip_addr = "127.0.0.1";
@@ -29,16 +31,12 @@ public class ListenNetwork extends Thread {
 				// SendMessage("/login " + UserName);
 
 				SendObject((Object)"hello");
-
-				//ListenNetwork net = new ListenNetwork();
 				run();
-				//net.start();
-				
 
 			} catch (NumberFormatException | IOException error) {
 				// TODO Auto-generated catch block
-				error.printStackTrace();
-				
+				//error.printStackTrace();
+				JOptionPane.showMessageDialog(null,"Server Can't connect");
 			}
 		}
 		
