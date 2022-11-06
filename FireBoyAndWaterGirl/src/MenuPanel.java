@@ -36,6 +36,8 @@ public class MenuPanel extends JPanel{
 
 	/* Server 정보 */
 	private String[] optionsToChoose = {"Server1", "Server2", "Server3"};
+	private final int BASE_PORT = 10000; // 기본 port number
+	private final int PORT_GAP = 10000; // port 사이 간격
 	
 	public MenuPanel() {
 		
@@ -99,41 +101,40 @@ public class MenuPanel extends JPanel{
 				System.out.println("server "+optionsToChoose[index]+" selected!!");
 				
 				
-				
-				
-				////// - 여기서 이름이나 서버 선택 안되어 있으면 오류!!!!!!
-				//선택된 서버에 따라 port번호 다르게 지정
-				if (index == 0) {
-					if (GameClientFrame.net == null)
-							GameClientFrame.net = new ListenNetwork(30000);
+				////// - 여기서 이름 입력 안했으면 오류!! 
+				// 오류 처리 코드 여기!
+				if (nameTextField.getText().equals("")) {
+					
+					System.out.println("nameTextField is empty");
 					
 				}
-				else if (index == 1) {
-					
-					
+				else {				
+					//선택된 서버에 따라 port번호 다르게 지정
+					int port = index * PORT_GAP + BASE_PORT;
+					GameClientFrame.net = new ListenNetwork(port);
+					setNetworkThread(port);
 				}
-				else {
-					
-					
-				}
-				
-				
-				
-
 			}
 		});
 		
 		add(startBtn);
 	} // end of MenuPanel Constructor..
 	
-	
+	public void setNetworkThread(int port) {
+		if (GameClientFrame.net == null)
+			GameClientFrame.net = new ListenNetwork(port);
+	}
 		
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(resizeIntroBackground, 0, 0, null);
+		repaint();
+	}
+	
 	public ImageIcon resizeImage(ImageIcon icon, int width, int height) {
 		
 		 return new ImageIcon(icon.getImage().getScaledInstance(width,height,Image.SCALE_SMOOTH));
 	}
-	
-	
 	
 	private void setElementsImages() {
 		
@@ -151,14 +152,6 @@ public class MenuPanel extends JPanel{
 		 
 		 startBtnClickedIcon = new ImageIcon("src/static/image/elements/clickedStartBtn.png");
 		 resizeStartBtnClickedIcon = resizeImage(startBtnClickedIcon,150,55);//new ImageIcon(startBtnClickedIcon.getImage().getScaledInstance(150,55,Image.SCALE_SMOOTH));
-	}
-	
-	
-	
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		g.drawImage(resizeIntroBackground, 0, 0, null);
-		repaint();
 	}
 	
 }
