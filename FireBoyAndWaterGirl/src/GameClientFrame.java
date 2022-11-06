@@ -22,9 +22,8 @@ public class GameClientFrame extends JFrame{
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	
-//		setContentPane(new GameIntroPanel());
-		GameScreenPanel s = new GameScreenPanel();
-		setContentPane(s);
+		setContentPane(new GameIntroPanel());
+//		setContentPane(new GameScreenPanel());
 		
 		setVisible(true);
 	}
