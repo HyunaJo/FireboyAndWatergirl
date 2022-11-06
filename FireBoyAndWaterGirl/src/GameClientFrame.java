@@ -16,14 +16,16 @@ public class GameClientFrame extends JFrame{
 	public static ListenNetwork net = null;
 	
 	public GameClientFrame() {
-		
 		setTitle("FireBoy and WaterGirl");
 		setSize(SCREEN_WIDTH,SCREEN_HEIGHT);
+		setResizable(false);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	
-		setContentPane(new GameIntroPanel());
-	
+//		setContentPane(new GameIntroPanel());
+		GameScreenPanel s = new GameScreenPanel();
+		setContentPane(s);
+		
 		setVisible(true);
 	}
 }
