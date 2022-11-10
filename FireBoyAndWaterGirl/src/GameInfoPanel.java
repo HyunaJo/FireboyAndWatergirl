@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class GameInfoPanel extends JPanel{
@@ -38,6 +39,14 @@ public class GameInfoPanel extends JPanel{
 			public void mousePressed(MouseEvent e) {
 				homeBtn.setIcon(clickedHomeIcon);
 				// 홈으로 이동 팝업창 띄우기
+				int answer = JOptionPane.showConfirmDialog(null, "홈으로 이동하시겠습니까?", "",JOptionPane.YES_NO_OPTION );
+				if(answer==JOptionPane.YES_OPTION){  //사용자가 yes를 눌렀을 경우
+					GameClientFrame.isChanged = true; // 화면 변화가 필요함
+					GameClientFrame.isHomeScreen = true; // 홈 화면으로 변화
+					GameClientFrame.net.exitRoom();
+					GameClientFrame.net.interrupt();
+					GameClientFrame.net = null;
+				}
 			}
 			
 			public void mouseReleased(MouseEvent e) {

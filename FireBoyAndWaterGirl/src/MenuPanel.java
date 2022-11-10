@@ -104,16 +104,12 @@ public class MenuPanel extends JPanel{
 					
 					System.out.println("nameTextField is empty");
 					JOptionPane.showMessageDialog(null,"이름을 입력해주세요");
-
 				}
 				else {									
 //					int port = index * PORT_GAP + BASE_PORT;//선택된 서버에 따라 port번호 다르게 지정
 					GameClientFrame.net = new ListenNetwork(nameTextField.getText(),PORT,index);
 					GameClientFrame.net.start();
-					/* 화면 전환 */
-					GameClientFrame.isChanged = true; // 화면 변화가 필요함
-					GameClientFrame.isWatingScreen = true; // 게임 대기화면으로 변화
-			
+					GameClientFrame.roomId = index+1; // 플레이어가 입장한 room id -> 1,2,3 
 				}
 			}
 		});

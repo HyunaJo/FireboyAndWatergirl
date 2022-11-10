@@ -17,6 +17,12 @@ class ChatMsg implements Serializable {
 		this.code = code;
 		this.data = msg;
 	}
+	
+	public ChatMsg(String UserName,int roomId, String code) {
+		this.UserName = UserName;
+		this.roomId = roomId;
+		this.code = code;
+	}
 
 	public int getRoomId() {
 		return roomId;

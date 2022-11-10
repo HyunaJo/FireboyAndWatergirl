@@ -40,6 +40,7 @@ public class GameServerFrame extends JFrame {
 	private ArrayList<GameRoom> gameRooms = new ArrayList<GameRoom>();
 	
 	private static final int BUF_LEN = 128; // Windows 처럼 BUF_LEN 을 정의
+	private static final String ALLOW_LOGIN_MSG = "ALLOW";
 
 	public GameServerFrame(int portNumber) {
 		this.portNumber = portNumber;
@@ -201,10 +202,10 @@ public class GameServerFrame extends JFrame {
 				gameRoom.getUserVec().add(this);
 				AppendText("새로운 참가자 " + UserName + " 입장.");
 				AppendText("[방"+gameRoom.getRoomId()+"] 참가자 "+gameRoom.getUserVec().size()+"/2");
-				WriteOne("Welcome to Java chat server\n");
-				WriteOne(UserName + "님 환영합니다.\n"); // 연결된 사용자에게 정상접속을 알림
-				String msg = "[" + UserName + "]님이 입장 하였습니다.\n";
-				WriteOthers(msg); // 아직 user_vc에 새로 입장한 user는 포함되지 않았다.
+//				WriteOne("Welcome to Java chat server\n");
+//				WriteOne(UserName + "님 환영합니다.\n"); // 연결된 사용자에게 정상접속을 알림
+//				String msg = "[" + UserName + "]님이 입장 하였습니다.\n";
+//				WriteOthers(msg); // 아직 user_vc에 새로 입장한 user는 포함되지 않았다.
 				return true;
 			}else {
 				AppendText("새로운 참가자 " + UserName + " 입장 거절 당함.");
@@ -214,6 +215,7 @@ public class GameServerFrame extends JFrame {
 		}
 
 		public void Logout() {
+			gameRooms.get(roomId).getUserVec().remove(this);
 			String msg = "[" + UserName + "]님이 퇴장 하였습니다.\n";
 			user_vc.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
 			WriteAll(msg); // 나를 제외한 다른 User들에게 전송
@@ -372,8 +374,15 @@ public class GameServerFrame extends JFrame {
 						System.out.println("100 들어옴");
 						UserName = cm.UserName;
 						UserStatus = "O"; // Online 상태
-						if(!Login(cm.roomId))
-							break; // 로그인 실패 시 스레드 종료
+						if(Login(cm.roomId)) { // 로그인 성공시
+							obcm = new ChatMsg("SERVER", cm.roomId, "200", ALLOW_LOGIN_MSG);
+							oos.writeObject(obcm);
+						}
+						else { // 로그인 실패 시 
+							obcm = new ChatMsg("SERVER", cm.roomId, "200", "deny");
+							oos.writeObject(obcm);
+							break; //스레드 종료
+						}
 					} else if (cm.code.matches("200")) {
 						msg = String.format("[%s] %s", cm.UserName, cm.data);
 						AppendText(msg); // server 화면에 출력
@@ -417,7 +426,7 @@ public class GameServerFrame extends JFrame {
 							//WriteAll(msg + "\n"); // Write All
 							WriteAllObject(cm);
 						}
-					} else if (cm.code.matches("400")) { // logout message 처리
+					} else if (cm.code.matches("999")) { // logout message 처리
 						Logout();
 						break;
 					} else { // 300, 500, ... 기타 object는 모두 방송한다.

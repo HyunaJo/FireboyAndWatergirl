@@ -20,6 +20,7 @@ public class GameClientFrame extends JFrame{
 	public static boolean isWatingScreen;
 	public static boolean isChanged;
 	public static boolean isNextStage;
+	public static int roomId;
 	
 	
 	public GameClientFrame() {
@@ -39,7 +40,7 @@ public class GameClientFrame extends JFrame{
 	}
 	
 	
-class GameThread extends Thread{ // 게임 전반적 관리
+	class GameThread extends Thread{ // 게임 전반적 관리
 		
 		public void run() {
 			
@@ -83,7 +84,7 @@ class GameThread extends Thread{ // 게임 전반적 관리
 		}
 		else if (isWatingScreen) { // 대기화면
 			isWatingScreen = false;
-			setContentPane(new GameScreenPanel());
+			setContentPane(new GameScreenPanel(roomId));
 		
 		}
 		else if (isNextStage) {

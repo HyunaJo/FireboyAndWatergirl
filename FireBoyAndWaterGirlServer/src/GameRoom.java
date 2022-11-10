@@ -50,6 +50,4 @@ public class GameRoom extends Thread{
 			return true;
 		}
 	}
-	
-	
 }

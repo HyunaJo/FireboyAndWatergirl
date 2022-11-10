@@ -12,6 +12,8 @@ public class ListenNetwork extends Thread {
 	String ip_addr = "127.0.0.1";
 	int port_no;
 	int roomId;
+	
+	private static final String ALLOW_LOGIN_MSG = "ALLOW";
 
 	private Socket socket;  // 연결소켓
 	private InputStream is;
@@ -19,8 +21,12 @@ public class ListenNetwork extends Thread {
 	private ObjectInputStream ois;
 	private ObjectOutputStream oos;
 	
+	public boolean isLogin = false;
+	private String userName = "";
+	
 	
 	public ListenNetwork(String userName,int port_no, int roomId) {
+		this.userName = userName;
 		this.port_no = port_no;
 		this.roomId = roomId;
 		try {
@@ -36,8 +42,6 @@ public class ListenNetwork extends Thread {
 			ChatMsg obcm = new ChatMsg(userName, roomId, "100", "Hello");
 			System.out.println(obcm.getUserName()+", "+obcm.getRoomId()+", "+obcm.getCode()+", "+obcm.getData());
 			SendObject(obcm);
-		
-		
 		} catch (NumberFormatException | IOException error) {
 			// TODO Auto-generated catch block
 			//error.printStackTrace();
@@ -70,30 +74,48 @@ public class ListenNetwork extends Thread {
 					System.out.println(msg);
 				} else
 					continue;
-//				switch (cm.getCode()) {
-//				case "200": // chat message
-//					AppendText(msg);
-//					break;
+				switch (cm.getCode()) {
+				case "200": // 서버 접속 결과 - allow,deny
+					System.out.println(cm.getData());
+					if(cm.getData().equals(ALLOW_LOGIN_MSG)) {
+						isLogin = true;
+						/* 화면 전환 */
+						GameClientFrame.isChanged = true; // 화면 변화가 필요함
+						GameClientFrame.isWatingScreen = true; // 게임 대기화면으로 변화
+					}
+					else if(cm.getData().equals("deny")) {
+						isLogin = false;
+						JOptionPane.showMessageDialog(null,"해당 서버는 가득 찼습니다. 다른 서버를 선택해주세요.");
+						return;
+					}
+					break;
 //				case "300": // Image 첨부
 //					AppendText("[" + cm.getId() + "]");
 //					AppendImage(cm.img);
 //					break;
-//				}
+				}
 			} catch (IOException e) {
 				//AppendText("ois.readObject() error");
 				try {
-
+					System.out.println("e1");
 					ois.close();
 					oos.close();
 					socket.close();
 
 					break;
 				} catch (Exception ee) {
+					System.out.println("e2");
 					break;
 				} // catch문 끝
 			} // 바깥 catch문끝
 
 		}
+	}
+	
+	public void exitRoom() {
+		ChatMsg obcm = new ChatMsg(this.userName, roomId, "999");
+		System.out.println(obcm.getUserName()+", "+obcm.getRoomId()+", "+obcm.getCode()+", "+obcm.getData());
+		SendObject(obcm);
 	}
 	
 	public void SendObject(Object ob) { // 서버로 메세지를 보내는 메소드
