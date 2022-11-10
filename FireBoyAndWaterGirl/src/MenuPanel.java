@@ -12,7 +12,6 @@ import java.net.Socket;
 
 
 public class MenuPanel extends JPanel{
-	 
 	/* Menu Panel에 들어갈 UI 요소*/
 	private ImageIcon menuIcon;
 	private Image resizeIntroBackground;
@@ -38,6 +37,7 @@ public class MenuPanel extends JPanel{
 	private String[] optionsToChoose = {"Server1", "Server2", "Server3"};
 	private final int BASE_PORT = 10000; // 기본 port number
 	private final int PORT_GAP = 10000; // port 사이 간격
+	private final int PORT = 30000;
 	
 	public MenuPanel() {
 		
@@ -106,10 +106,9 @@ public class MenuPanel extends JPanel{
 					JOptionPane.showMessageDialog(null,"이름을 입력해주세요");
 
 				}
-				else {				
-					
-					int port = index * PORT_GAP + BASE_PORT;//선택된 서버에 따라 port번호 다르게 지정
-					GameClientFrame.net = new ListenNetwork(nameTextField.getText(),port);
+				else {									
+//					int port = index * PORT_GAP + BASE_PORT;//선택된 서버에 따라 port번호 다르게 지정
+					GameClientFrame.net = new ListenNetwork(nameTextField.getText(),PORT,index);
 					GameClientFrame.net.start();
 					/* 화면 전환 */
 					GameClientFrame.isChanged = true; // 화면 변화가 필요함
