@@ -18,6 +18,7 @@ public class ListenNetwork extends Thread {
 		private ObjectInputStream ois;
 		private ObjectOutputStream oos;
 		
+		
 		public ListenNetwork(String userName,int port_no) {
 			this.port_no = port_no;
 			try {
@@ -32,9 +33,8 @@ public class ListenNetwork extends Thread {
 				System.out.println("userName = "+userName);
 				ChatMsg obcm = new ChatMsg(userName, "100", "Hello");
 				SendObject(obcm);
-				
-				run();
-
+			
+			
 			} catch (NumberFormatException | IOException error) {
 				// TODO Auto-generated catch block
 				//error.printStackTrace();
@@ -43,6 +43,7 @@ public class ListenNetwork extends Thread {
 		}
 		
 		public void run() {
+			
 			while (true) {
 				try {
 				
@@ -63,7 +64,7 @@ public class ListenNetwork extends Thread {
 					}
 					if (obcm instanceof ChatMsg) {
 						cm = (ChatMsg) obcm;
-						msg = String.format("[%s] %s", cm.getId(), cm.getData());
+						msg = String.format("[%s] %s", cm.getUserName(), cm.getData());
 						System.out.println(msg);
 					} else
 						continue;

@@ -5,13 +5,13 @@ import javax.swing.ImageIcon;
 
 class ChatMsg implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private String id;
+	private String UserName;
 	private String code; // 100:로그인, 400:로그아웃, 200:채팅메시지, 300:Image
 	private String data;
 	public ImageIcon img;
 
-	public ChatMsg(String id, String code, String msg) {
-		this.id = id;
+	public ChatMsg(String UserName, String code, String msg) {
+		this.UserName = UserName;
 		this.code = code;
 		this.data = msg;
 	}
@@ -28,12 +28,12 @@ class ChatMsg implements Serializable {
 		return data;
 	}
 
-	public String getId() {
-		return id;
+	public String getUserName() {
+		return UserName;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setId(String UserName) {
+		this.UserName = UserName;
 	}
 
 	public void setData(String data) {

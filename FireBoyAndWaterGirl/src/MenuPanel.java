@@ -96,35 +96,34 @@ public class MenuPanel extends JPanel{
 			
 			public void mousePressed(MouseEvent e) {
 				
-				//여기서 소켓 스레드 시작해야할 듯 - thread.run()
-				int index = serverComboBox.getSelectedIndex();
+				int index = serverComboBox.getSelectedIndex(); // 서버 넘버
 				System.out.println("server "+optionsToChoose[index]+" selected!!");
 				
 				
-				////// - 여기서 이름 입력 안했으면 오류!! 
-				// 오류 처리 코드 여기!
-				if (nameTextField.getText().equals("")) {
+				if (nameTextField.getText().equals("")) { // 이름 입력 안했을 시
 					
 					System.out.println("nameTextField is empty");
 					JOptionPane.showMessageDialog(null,"이름을 입력해주세요");
 
 				}
 				else {				
-					//선택된 서버에 따라 port번호 다르게 지정
-					int port = index * PORT_GAP + BASE_PORT;
+					
+					int port = index * PORT_GAP + BASE_PORT;//선택된 서버에 따라 port번호 다르게 지정
 					GameClientFrame.net = new ListenNetwork(nameTextField.getText(),port);
-					//setNetworkThread(port);
+					GameClientFrame.net.start();
+					/* 화면 전환 */
+					GameClientFrame.isChanged = true; // 화면 변화가 필요함
+					GameClientFrame.isWatingScreen = true; // 게임 대기화면으로 변화
+			
 				}
 			}
 		});
 		
 		add(startBtn);
+		
 	} // end of MenuPanel Constructor..
 	
-//	public void setNetworkThread(int port) {
-//		if (GameClientFrame.net == null)
-//			GameClientFrame.net = new ListenNetwork(port);
-//	}
+
 		
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
