@@ -19,7 +19,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	    // 이미지 파일 불러오는 툴킷.
 	   Toolkit imageTool = Toolkit.getDefaultToolkit();
 	   Image character = imageTool.getImage("src/static/image/character/water_girl_character.png");
-	   Image map = imageTool.getImage("src/static/image/background/TempleHallForest.jpg");
+	   Image map = imageTool.getImage("src/static/image/background/gamePlayBackground.jpg");
 	  
 	   // 이미지 버퍼
 	   Image buffImg;
