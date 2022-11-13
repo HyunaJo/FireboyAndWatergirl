@@ -1,5 +1,7 @@
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -29,6 +31,11 @@ public class GameScreenPanel extends JPanel{
 		// 테스트 위해서 임의로 박아둠 //////////
 		//gameWaitPane.changePlayerNum(2); // 입장한 플레이어 수=1
 		/////////////////////////////////
+		
+		
 		gameWaitPane.requestFocus();
+		gameWaitPane.setFocusable(true);
+		
+		
 	}
 }
