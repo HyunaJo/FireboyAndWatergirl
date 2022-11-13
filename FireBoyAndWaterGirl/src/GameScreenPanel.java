@@ -1,5 +1,7 @@
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -14,11 +16,23 @@ public class GameScreenPanel extends JPanel{
 		setVisible(true);
 
 		// 게임 대기 화면 (오른쪽)
-		GameWaitPanel gameWaitPane = new GameWaitPanel();
-//		GamePlayPanel gameWaitPane = new GamePlayPanel();
+//		GameWaitPanel gameWaitPane = new GameWaitPanel();
+		GamePlayPanel gameWaitPane = new GamePlayPanel();
 		gameWaitPane.setBounds(0, 0, gameWaitPane.getWidth(), gameWaitPane.getHeight());
-		System.out.println(gameWaitPane.getWidth()+","+ gameWaitPane.getHeight());
 		add(gameWaitPane);
+		
+		gameWaitPane.setBackground(Color.BLACK);
+
+		addKeyListener(gameWaitPane.testKey);
+		gameWaitPane.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("mouse click");
+				requestFocus();
+				setFocusable(true);
+			}
+		
+		});
 		
 		// 게임 정보 화면(왼쪽) (서버 정보, 홈버튼, 채팅...)
 		GameInfoPanel gameInfoPane = new GameInfoPanel();
@@ -26,7 +40,7 @@ public class GameScreenPanel extends JPanel{
 		gameInfoPane.setServerName(roomId);
 		add(gameInfoPane);
 
-		gameWaitPane.changePlayerNum(GameClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
-		gameWaitPane.requestFocus();
+//		gameWaitPane.changePlayerNum(GameClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
+
 	}
 }

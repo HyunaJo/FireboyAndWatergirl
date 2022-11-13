@@ -6,6 +6,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	   
 	private final int WIDTH = 717;
 	private final int HEIGHT = 563;
+	public KeyAdapter testKey;
 	
 	   //게임 제어를 위한 변수
 	   int status;//게임의 상태
@@ -73,8 +74,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	        // 프레임의 x버튼 누르면 프로세스 종료.
 	        systeminit();
 	        
-	        // 키 어댑터 ( 키 처리용 )
-	        addKeyListener(new KeyAdapter() {
+	        testKey = new KeyAdapter() {
 	            @Override
 	            public void keyPressed(KeyEvent e) {
 	            	System.out.println("키가 눌림");
@@ -101,7 +101,9 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	            public void keyReleased(KeyEvent e) {
 	            	character = imageTool.getImage("src/static/image/character/water_girl_character.png");
 	            }
-	        });
+	        };
+	        // 키 어댑터 ( 키 처리용 )
+//	        addKeyListener();
 
 	    }
 
@@ -120,7 +122,18 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	        g.drawImage(buffImg,0,0,this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. ( 도화지에 이미지를 출력 )
 	        repaint();
 	    }
-
-
-
 }
+
+//import javax.swing.JPanel;
+//import java.awt.*;
+//import java.awt.event.*;
+//
+//public class GamePlayPanel extends JPanel{
+//	private final int WIDTH = 717;
+//	private final int HEIGHT = 563;
+//	
+//	public GamePlayPanel() {
+//		setSize(WIDTH,HEIGHT);
+//	}
+//
+//}

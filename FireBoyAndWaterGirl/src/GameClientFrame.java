@@ -38,10 +38,12 @@ public class GameClientFrame extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	
 		setContentPane(new GameIntroPanel());
-		
 		GameThread gth = new GameThread(); // 게임 화면 전환 스레드(게임 전반적 관리)
 		gth.start();
 		setVisible(true);
+
+		this.requestFocus();
+		this.setFocusable(true);
 	}
 	
 	
@@ -90,14 +92,14 @@ public class GameClientFrame extends JFrame{
 			isGameScreen = false;
 			gameScreenPane = new GameScreenPanel(roomId);
 			setContentPane(gameScreenPane);
+			gameScreenPane.requestFocus();
+			gameScreenPane.setFocusable(true);
 		}
 		else if (isNextStage) {
 			isNextStage = false;
 		}
 	}
 }
-
-
 
 
 
