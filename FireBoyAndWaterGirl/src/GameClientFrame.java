@@ -22,6 +22,8 @@ public class GameClientFrame extends JFrame{
 	public static boolean isNextStage;
 	public static int roomId;
 	
+	public static GameScreenPanel gameScreenPane;
+	
 	
 	public GameClientFrame() {
 		
@@ -84,7 +86,8 @@ public class GameClientFrame extends JFrame{
 		}
 		else if (isWatingScreen) { // 대기화면
 			isWatingScreen = false;
-			setContentPane(new GameScreenPanel(roomId));
+			gameScreenPane = new GameScreenPanel(roomId);
+			setContentPane(gameScreenPane);
 		
 		}
 		else if (isNextStage) {

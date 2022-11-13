@@ -41,6 +41,7 @@ public class GameServerFrame extends JFrame {
 	
 	private static final int BUF_LEN = 128; // Windows 처럼 BUF_LEN 을 정의
 	private static final String ALLOW_LOGIN_MSG = "ALLOW";
+	private static final String DENY_LOGIN_MSG = "DENY";
 
 	public GameServerFrame(int portNumber) {
 		this.portNumber = portNumber;
@@ -379,7 +380,7 @@ public class GameServerFrame extends JFrame {
 							oos.writeObject(obcm);
 						}
 						else { // 로그인 실패 시 
-							obcm = new ChatMsg("SERVER", cm.roomId, "200", "deny");
+							obcm = new ChatMsg("SERVER", cm.roomId, "200", DENY_LOGIN_MSG);
 							oos.writeObject(obcm);
 							break; //스레드 종료
 						}

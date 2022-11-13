@@ -14,6 +14,7 @@ public class ListenNetwork extends Thread {
 	int roomId;
 	
 	private static final String ALLOW_LOGIN_MSG = "ALLOW";
+	private static final String DENY_LOGIN_MSG = "DENY";
 
 	private Socket socket;  // 연결소켓
 	private InputStream is;
@@ -83,7 +84,7 @@ public class ListenNetwork extends Thread {
 						GameClientFrame.isChanged = true; // 화면 변화가 필요함
 						GameClientFrame.isWatingScreen = true; // 게임 대기화면으로 변화
 					}
-					else if(cm.getData().equals("deny")) {
+					else if(cm.getData().equals(DENY_LOGIN_MSG)) {
 						isLogin = false;
 						JOptionPane.showMessageDialog(null,"해당 서버는 가득 찼습니다. 다른 서버를 선택해주세요.");
 						return;
