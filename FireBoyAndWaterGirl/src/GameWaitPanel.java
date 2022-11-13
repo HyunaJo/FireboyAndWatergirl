@@ -68,8 +68,8 @@ public class GameWaitPanel extends JPanel{
 		add(totalPlayerLabel);
 	}
 	
-	public void changePlayerNum(int enteredPlayer) { // 참여한 플레이어 수 이미지 변경
-		switch (enteredPlayer) {
+	public void changePlayerNum(int waitingPlayerNum) { // 참여한 플레이어 수 이미지 변경
+		switch (waitingPlayerNum) {
 		case 1: {
 			waitPlayerIcon = new ImageIcon(new ImageIcon(oneImgPath).getImage().getScaledInstance(waitPlayerLabel.getWidth(),waitPlayerLabel.getHeight(),Image.SCALE_SMOOTH));
 			break;

@@ -197,7 +197,6 @@ public class GameServerFrame extends JFrame {
 		}
 
 		public boolean Login(int roomId) {
-			System.out.println("aaa");
 			GameRoom gameRoom = gameRooms.get(roomId);
 			if(gameRoom.enterRoom()) {
 				gameRoom.getUserVec().add(this);
@@ -212,14 +211,18 @@ public class GameServerFrame extends JFrame {
 				AppendText("새로운 참가자 " + UserName + " 입장 거절 당함.");
 				return false;
 			}
-			
+		}
+		
+		public int getPlayerNum(int roomId) { // gameRoom에 입장한 플레이어 수
+			return gameRooms.get(roomId).getUserVec().size();
 		}
 
 		public void Logout() {
 			gameRooms.get(roomId).getUserVec().remove(this);
 			String msg = "[" + UserName + "]님이 퇴장 하였습니다.\n";
 			user_vc.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
-			WriteAll(msg); // 나를 제외한 다른 User들에게 전송
+			ChatMsg obcm = new ChatMsg("SERVER",roomId, "999", Integer.toString(getPlayerNum(roomId)));
+			WriteAllObject(roomId, obcm); // 나를 제외한 다른 User들에게 전송
 			AppendText("사용자 " + "[" + UserName + "] 퇴장. 현재 참가자 수 " + user_vc.size());
 		}
 
@@ -232,9 +235,12 @@ public class GameServerFrame extends JFrame {
 			}
 		}
 		// 모든 User들에게 Object를 방송. 채팅 message와 image object를 보낼 수 있다
-		public void WriteAllObject(Object ob) {
-			for (int i = 0; i < user_vc.size(); i++) {
-				UserService user = (UserService) user_vc.elementAt(i);
+		public void WriteAllObject(int roomId, Object ob) {
+			GameRoom gameRoom = gameRooms.get(roomId);
+			Vector gameRoomUserVec = gameRoom.getUserVec();
+			int userVecSize = gameRoomUserVec.size();
+			for (int i = 0; i < userVecSize; i++) {
+				UserService user = (UserService) gameRoomUserVec.elementAt(i);
 				if (user.UserStatus == "O")
 					user.WriteOneObject(ob);
 			}
@@ -371,16 +377,17 @@ public class GameServerFrame extends JFrame {
 						AppendObject(cm);
 					} else
 						continue;
-					if (cm.code.matches("100")) {
-						System.out.println("100 들어옴");
+					if (cm.code.matches("100")) { // login
 						UserName = cm.UserName;
 						UserStatus = "O"; // Online 상태
 						if(Login(cm.roomId)) { // 로그인 성공시
-							obcm = new ChatMsg("SERVER", cm.roomId, "200", ALLOW_LOGIN_MSG);
-							oos.writeObject(obcm);
+							this.roomId = cm.roomId;
+							int waitingPlayerNum = getPlayerNum(cm.roomId);
+							obcm = new ChatMsg("SERVER", cm.roomId, "100", ALLOW_LOGIN_MSG+" "+waitingPlayerNum);
+							WriteAllObject(cm.roomId, obcm);
 						}
 						else { // 로그인 실패 시 
-							obcm = new ChatMsg("SERVER", cm.roomId, "200", DENY_LOGIN_MSG);
+							obcm = new ChatMsg("SERVER", cm.roomId, "100", DENY_LOGIN_MSG);
 							oos.writeObject(obcm);
 							break; //스레드 종료
 						}
@@ -425,13 +432,13 @@ public class GameServerFrame extends JFrame {
 						} else { // 일반 채팅 메시지
 							UserStatus = "O";
 							//WriteAll(msg + "\n"); // Write All
-							WriteAllObject(cm);
+//							WriteAllObject(cm);
 						}
 					} else if (cm.code.matches("999")) { // logout message 처리
 						Logout();
 						break;
 					} else { // 300, 500, ... 기타 object는 모두 방송한다.
-						WriteAllObject(cm);
+//						WriteAllObject(cm);
 					} 
 				} catch (IOException e) {
 					AppendText("ois.readObject() error");

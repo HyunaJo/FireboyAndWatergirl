@@ -14,8 +14,8 @@ public class GameScreenPanel extends JPanel{
 		setVisible(true);
 
 		// 게임 대기 화면 (오른쪽)
-		//GameWaitPanel gameWaitPane = new GameWaitPanel();
-		GamePlayPanel gameWaitPane = new GamePlayPanel();
+		GameWaitPanel gameWaitPane = new GameWaitPanel();
+//		GamePlayPanel gameWaitPane = new GamePlayPanel();
 		gameWaitPane.setBounds(0, 0, gameWaitPane.getWidth(), gameWaitPane.getHeight());
 		System.out.println(gameWaitPane.getWidth()+","+ gameWaitPane.getHeight());
 		add(gameWaitPane);
@@ -26,9 +26,7 @@ public class GameScreenPanel extends JPanel{
 		gameInfoPane.setServerName(roomId);
 		add(gameInfoPane);
 
-		// 테스트 위해서 임의로 박아둠 //////////
-		//gameWaitPane.changePlayerNum(2); // 입장한 플레이어 수=1
-		/////////////////////////////////
+		gameWaitPane.changePlayerNum(GameClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
 		gameWaitPane.requestFocus();
 	}
 }

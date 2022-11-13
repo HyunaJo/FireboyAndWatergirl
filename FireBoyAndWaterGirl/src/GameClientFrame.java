@@ -17,10 +17,13 @@ public class GameClientFrame extends JFrame{
 	
 	
 	public static boolean isHomeScreen;
-	public static boolean isWatingScreen;
+	public static boolean isGameScreen;
 	public static boolean isChanged;
 	public static boolean isNextStage;
+	public static boolean isWaitingScreen;
+	public static boolean isPlayingScreen;
 	public static int roomId;
+	public static int waitingPlayerNum;
 	
 	public static GameScreenPanel gameScreenPane;
 	
@@ -70,30 +73,27 @@ public class GameClientFrame extends JFrame{
 	void init() {
 		
 		isHomeScreen = false; // 홈화면
-		isWatingScreen = false; // 대기 화면
+		isGameScreen = false; // 서버 선택 후 입장한 화면
 		isNextStage = false;
 		isChanged = false; // 화면의 변화가 필요한지 여부
+		isWaitingScreen = false; // 대기 화면
+		isPlayingScreen = false; // 게임 중인 화면
 		
 	}
 
 	public void selectScreen() {
-
-	
 		if (isHomeScreen) { // 홈화면
 			isHomeScreen = false;
 			setContentPane(new GameIntroPanel());
-			
 		}
-		else if (isWatingScreen) { // 대기화면
-			isWatingScreen = false;
+		else if (isGameScreen) { // 대기화면
+			isGameScreen = false;
 			gameScreenPane = new GameScreenPanel(roomId);
 			setContentPane(gameScreenPane);
-		
 		}
 		else if (isNextStage) {
 			isNextStage = false;
 		}
-
 	}
 }
 

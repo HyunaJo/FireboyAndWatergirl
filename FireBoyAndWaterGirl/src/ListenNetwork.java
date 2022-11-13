@@ -12,6 +12,7 @@ public class ListenNetwork extends Thread {
 	String ip_addr = "127.0.0.1";
 	int port_no;
 	int roomId;
+	int playerCharacter = 0;
 	
 	private static final String ALLOW_LOGIN_MSG = "ALLOW";
 	private static final String DENY_LOGIN_MSG = "DENY";
@@ -22,7 +23,7 @@ public class ListenNetwork extends Thread {
 	private ObjectInputStream ois;
 	private ObjectOutputStream oos;
 	
-	public boolean isLogin = false;
+//	public boolean isLogin = false;
 	private String userName = "";
 	
 	
@@ -38,10 +39,7 @@ public class ListenNetwork extends Thread {
 			oos.flush();
 			ois = new ObjectInputStream(socket.getInputStream());
 
-			// SendMessage("/login " + UserName);
-			System.out.println("userName = "+userName+" 선택 서버 = "+roomId+"번");
-			ChatMsg obcm = new ChatMsg(userName, roomId, "100", "Hello");
-			System.out.println(obcm.getUserName()+", "+obcm.getRoomId()+", "+obcm.getCode()+", "+obcm.getData());
+			ChatMsg obcm = new ChatMsg(userName, roomId, "100", ""); // gameRoom 입장 시도
 			SendObject(obcm);
 		} catch (NumberFormatException | IOException error) {
 			// TODO Auto-generated catch block
@@ -76,16 +74,33 @@ public class ListenNetwork extends Thread {
 				} else
 					continue;
 				switch (cm.getCode()) {
-				case "200": // 서버 접속 결과 - allow,deny
+				case "100": // 서버 접속 결과 - allow,deny
 					System.out.println(cm.getData());
-					if(cm.getData().equals(ALLOW_LOGIN_MSG)) {
-						isLogin = true;
+					String loginResult = cm.getData().split(" ")[0];
+					System.out.println("loginResult = "+loginResult);
+					if(loginResult.equals(ALLOW_LOGIN_MSG)) {
+						GameClientFrame.isWaitingScreen = true;
+//						isLogin = true;
 						/* 화면 전환 */
+						switch(cm.getData().split(" ")[1]) {
+						case "1":
+							if(playerCharacter == 0) // 처음 입장한 플레이어인 경우
+								playerCharacter = 1;
+							GameClientFrame.waitingPlayerNum = 1;
+							break;
+						case "2":
+							if(playerCharacter == 0) // 2번째로 입장한 플레이어인 경우
+								playerCharacter = 2;
+							GameClientFrame.waitingPlayerNum = 2;
+							break;
+						}
+						System.out.println(userName+" : "+playerCharacter+"번 캐릭터");
 						GameClientFrame.isChanged = true; // 화면 변화가 필요함
-						GameClientFrame.isWatingScreen = true; // 게임 대기화면으로 변화
+						GameClientFrame.isGameScreen = true; // 게임 대기화면으로 변화
 					}
-					else if(cm.getData().equals(DENY_LOGIN_MSG)) {
-						isLogin = false;
+					else if(loginResult.equals(DENY_LOGIN_MSG)) {
+						GameClientFrame.isWaitingScreen = false;
+//						isLogin = false;
 						JOptionPane.showMessageDialog(null,"해당 서버는 가득 찼습니다. 다른 서버를 선택해주세요.");
 						return;
 					}
@@ -94,6 +109,17 @@ public class ListenNetwork extends Thread {
 //					AppendText("[" + cm.getId() + "]");
 //					AppendImage(cm.img);
 //					break;
+				case "999":
+					if(GameClientFrame.isWaitingScreen) { // 대기화면에서 상대방이 나간 경우
+						System.out.println("999 받음 => "+cm.getData());
+						if(cm.getData().equals("1")) {
+							playerCharacter = 1;
+							GameClientFrame.waitingPlayerNum = 1;
+						}
+						GameClientFrame.isChanged = true; // 화면 변화가 필요함
+						GameClientFrame.isGameScreen = true; // 게임 대기화면으로 변화
+					}
+					break;
 				}
 			} catch (IOException e) {
 				//AppendText("ois.readObject() error");
