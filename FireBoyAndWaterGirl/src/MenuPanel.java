@@ -110,6 +110,7 @@ public class MenuPanel extends JPanel{
 					GameClientFrame.net = new ListenNetwork(nameTextField.getText(),PORT,index);
 					GameClientFrame.net.start();
 					GameClientFrame.roomId = index+1; // 플레이어가 입장한 room id -> 1,2,3
+					GameClientFrame.userName = nameTextField.getText();
 				}
 			}
 		});

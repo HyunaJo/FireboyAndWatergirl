@@ -5,6 +5,7 @@ import java.awt.event.*;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Vector;
 import java.awt.*;
 import javax.swing.*;
 
@@ -23,8 +24,9 @@ public class GameClientFrame extends JFrame{
 	public static boolean isWaitingScreen;
 	public static boolean isPlayingScreen;
 	public static int roomId;
+	public static String userName;
 	public static int waitingPlayerNum;
-	
+
 	public static GameScreenPanel gameScreenPane;
 	
 	
@@ -90,7 +92,7 @@ public class GameClientFrame extends JFrame{
 		}
 		else if (isGameScreen) { // 대기화면
 			isGameScreen = false;
-			gameScreenPane = new GameScreenPanel(roomId);
+			gameScreenPane = new GameScreenPanel(roomId,userName);
 			setContentPane(gameScreenPane);
 			gameScreenPane.requestFocus();
 			gameScreenPane.setFocusable(true);

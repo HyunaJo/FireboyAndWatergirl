@@ -14,7 +14,7 @@ public class ChattingPanel extends JPanel{
 	private JScrollPane chattingHistoryScroll = new JScrollPane();
 	private JTextPane chattingHistory;
 	private JTextArea chattingInput;
-	private String name = "파송송"; // player 닉네임
+	private String name; // player 닉네임
 	
 	private JPanel chattingInputPane;
 	JLabel nameLabel;
@@ -22,7 +22,7 @@ public class ChattingPanel extends JPanel{
 	private Color sendBtnColor = new Color(170,170,170);
 	private Color sendBtnPressedColor = new Color(217,217,217);
 	
-	public ChattingPanel() {
+	public ChattingPanel(String name) {
 		setSize(245,405);
 		setLayout(null);
 //		setBackground(Color.CYAN);
