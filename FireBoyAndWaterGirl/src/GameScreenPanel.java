@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 
 // 서버 입장 이후 게임하는 화면 (대기, 게임, 채팅...)
 public class GameScreenPanel extends JPanel{
+	private GameWaitPanel gameWaitPane;
+	
 	public GameScreenPanel(int roomId, String userName) {
 		setSize(GameClientFrame.SCREEN_WIDTH,GameClientFrame.SCREEN_HEIGHT);
 		System.out.println(GameClientFrame.SCREEN_WIDTH+","+GameClientFrame.SCREEN_HEIGHT);
@@ -16,23 +18,25 @@ public class GameScreenPanel extends JPanel{
 		setVisible(true);
 
 		// 게임 대기 화면 (오른쪽)
-//		GameWaitPanel gameWaitPane = new GameWaitPanel();
-		GamePlayPanel gameWaitPane = new GamePlayPanel();
-		gameWaitPane.setBounds(0, 0, gameWaitPane.getWidth(), gameWaitPane.getHeight());
+		gameWaitPane = new GameWaitPanel();
+//		GamePlayPanel gameWaitPane = new GamePlayPanel();
+//		gameWaitPane.setBounds(0, 0, gameWaitPane.getWidth(), gameWaitPane.getHeight());
 		add(gameWaitPane);
 		
 		gameWaitPane.setBackground(Color.BLACK);
-
-		addKeyListener(gameWaitPane.testKey);
-		gameWaitPane.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.out.println("mouse click");
-				requestFocus();
-				setFocusable(true);
-			}
 		
-		});
+		changeWaitPlayerNum();
+
+//		addKeyListener(gameWaitPane.testKey);
+//		gameWaitPane.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseClicked(MouseEvent e) {
+//				System.out.println("mouse click");
+//				requestFocus();
+//				setFocusable(true);
+//			}
+//		
+//		});
 		
 		// 게임 정보 화면(왼쪽) (서버 정보, 홈버튼, 채팅...)
 		GameInfoPanel gameInfoPane = new GameInfoPanel();
@@ -41,7 +45,12 @@ public class GameScreenPanel extends JPanel{
 		gameInfoPane.setUserName(userName);
 		add(gameInfoPane);
 
-//		gameWaitPane.changePlayerNum(GameClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
-
+		System.out.println("Gamescreenpanel");
+				
+	}
+	
+	public void changeWaitPlayerNum() {
+		gameWaitPane.changePlayerNum(GameClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
+		this.repaint();
 	}
 }

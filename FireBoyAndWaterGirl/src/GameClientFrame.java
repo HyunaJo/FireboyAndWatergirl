@@ -2,7 +2,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 import java.awt.event.*;
-
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -27,7 +27,8 @@ public class GameClientFrame extends JFrame{
 	public static String userName;
 	public static int waitingPlayerNum;
 
-	public static GameScreenPanel gameScreenPane;
+	public static GameScreenPanel gameScreenPane = null;
+	public static ArrayList<String> players = new ArrayList<String>();
 	
 	
 	public GameClientFrame() {
@@ -92,10 +93,15 @@ public class GameClientFrame extends JFrame{
 		}
 		else if (isGameScreen) { // 대기화면
 			isGameScreen = false;
-			gameScreenPane = new GameScreenPanel(roomId,userName);
-			setContentPane(gameScreenPane);
-			gameScreenPane.requestFocus();
-			gameScreenPane.setFocusable(true);
+			if(gameScreenPane == null) {
+				gameScreenPane = new GameScreenPanel(roomId,userName);
+				setContentPane(gameScreenPane);
+				gameScreenPane.requestFocus();
+				gameScreenPane.setFocusable(true);
+			}
+			else {
+				gameScreenPane.changeWaitPlayerNum();
+			}
 		}
 		else if (isNextStage) {
 			isNextStage = false;
