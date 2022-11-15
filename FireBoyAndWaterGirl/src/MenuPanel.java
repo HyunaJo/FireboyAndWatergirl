@@ -109,7 +109,7 @@ public class MenuPanel extends JPanel{
 //					int port = index * PORT_GAP + BASE_PORT;//선택된 서버에 따라 port번호 다르게 지정
 					GameClientFrame.net = new ListenNetwork(nameTextField.getText(),PORT,index);
 					GameClientFrame.net.start();
-					GameClientFrame.roomId = index+1; // 플레이어가 입장한 room id -> 1,2,3
+					GameClientFrame.roomId = index; // 플레이어가 입장한 room id -> 0,1,2
 					GameClientFrame.userName = nameTextField.getText();
 				}
 			}

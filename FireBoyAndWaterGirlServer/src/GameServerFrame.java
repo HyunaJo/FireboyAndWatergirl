@@ -454,8 +454,8 @@ public class GameServerFrame extends JFrame {
 					} 
 					else if (cm.code.matches("300")) {
 						System.out.println("300을 받았어요!!!! : "+cm.roomId+" "+roomId);
-						obcm = new ChatMsg("SERVER", roomId, "300", "게임을 시작합니다.");
-						WriteAllObject(roomId, obcm);
+						obcm = new ChatMsg("SERVER", cm.roomId, "300", "게임을 시작합니다.");
+						WriteAllObject(cm.roomId, obcm);
 					}
 					else if (cm.code.matches("999")) { // logout message 처리
 						Logout();
