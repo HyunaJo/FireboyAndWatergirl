@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 // 서버 입장 이후 게임하는 화면 (대기, 게임, 채팅...)
 public class GameScreenPanel extends JPanel{
 	private GameWaitPanel gameWaitPane;
+	private GameInfoPanel gameInfoPane;
 	
 	public GameScreenPanel(int roomId, String userName) {
 		setSize(GameClientFrame.SCREEN_WIDTH,GameClientFrame.SCREEN_HEIGHT);
@@ -39,18 +40,27 @@ public class GameScreenPanel extends JPanel{
 //		});
 		
 		// 게임 정보 화면(왼쪽) (서버 정보, 홈버튼, 채팅...)
-		GameInfoPanel gameInfoPane = new GameInfoPanel();
+		gameInfoPane = new GameInfoPanel();
 		gameInfoPane.setBounds(gameWaitPane.getWidth(), 0, gameInfoPane.getWidth(), gameInfoPane.getHeight());
 		gameInfoPane.setServerName(roomId);
 		gameInfoPane.setUserName(userName);
 		add(gameInfoPane);
-
-		System.out.println("Gamescreenpanel");
+		changePlayerList();
 				
 	}
 	
 	public void changeWaitPlayerNum() {
 		gameWaitPane.changePlayerNum(GameClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
+		this.repaint();
+	}
+	
+	public void changePlayerList() {
+		gameInfoPane.changePlayerList(GameClientFrame.playerNames);
+		this.repaint();
+	}
+	
+	public void removePlayerList(String name) {
+		gameInfoPane.removePlayerList(name);
 		this.repaint();
 	}
 }

@@ -25,10 +25,10 @@ public class GameClientFrame extends JFrame{
 	public static boolean isPlayingScreen;
 	public static int roomId;
 	public static String userName;
-	public static int waitingPlayerNum;
+	public static int waitingPlayerNum; // 기다리는 사람 수
 
 	public static GameScreenPanel gameScreenPane = null;
-	public static ArrayList<String> players = new ArrayList<String>();
+	public static ArrayList<String> playerNames = new ArrayList<String>();
 	
 	
 	public GameClientFrame() {
@@ -75,8 +75,7 @@ public class GameClientFrame extends JFrame{
 		}	
 	}
 	
-	void init() {
-		
+	static void init() {
 		isHomeScreen = false; // 홈화면
 		isGameScreen = false; // 서버 선택 후 입장한 화면
 		isNextStage = false;
@@ -84,6 +83,8 @@ public class GameClientFrame extends JFrame{
 		isWaitingScreen = false; // 대기 화면
 		isPlayingScreen = false; // 게임 중인 화면
 		
+		gameScreenPane = null;
+		playerNames.clear();
 	}
 
 	public void selectScreen() {
@@ -101,6 +102,7 @@ public class GameClientFrame extends JFrame{
 			}
 			else {
 				gameScreenPane.changeWaitPlayerNum();
+				gameScreenPane.changePlayerList();
 			}
 		}
 		else if (isNextStage) {

@@ -4,6 +4,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -46,6 +47,7 @@ public class GameInfoPanel extends JPanel {
 				// 홈으로 이동 팝업창 띄우기
 				int answer = JOptionPane.showConfirmDialog(null, "홈으로 이동하시겠습니까?", "", JOptionPane.YES_NO_OPTION);
 				if (answer == JOptionPane.YES_OPTION) { // 사용자가 yes를 눌렀을 경우
+					GameClientFrame.init();
 					GameClientFrame.isChanged = true; // 화면 변화가 필요함
 					GameClientFrame.isHomeScreen = true; // 홈 화면으로 변화
 					GameClientFrame.net.exitRoom();
@@ -62,12 +64,6 @@ public class GameInfoPanel extends JPanel {
 		// 참가자 목록
 		playerList.setBounds(13, 55, playerList.getWidth(), playerList.getHeight());
 		add(playerList);
-
-		///// 테스트용으로 참가자 정보 박아둔것 /////
-		//playerList.addPlayerLabel(1, "FireBoy : 파송송");
-		//playerList.addPlayerLabel(2, "WaterGirl : 새하얀돌덩이");
-		///////////////////////////////////
-
 	}
 
 	public void setServerName(int serverNum) { // 서버 이름 이미지 붙이기
@@ -99,4 +95,13 @@ public class GameInfoPanel extends JPanel {
 		add(chattingPane);
 	}
 	
+	public void changePlayerList(ArrayList<String> playerNames) {
+		for(int i=0;i<playerNames.size();i++) {
+			playerList.addPlayerLabel(i+1, playerNames.get(i));
+		}
+	}
+	
+	public void removePlayerList(String name) {
+		playerList.removePlayerLabel(name);
+	}
 }

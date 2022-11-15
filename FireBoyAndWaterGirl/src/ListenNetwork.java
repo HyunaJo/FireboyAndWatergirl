@@ -4,6 +4,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -25,7 +26,6 @@ public class ListenNetwork extends Thread {
 	
 //	public boolean isLogin = false;
 	private String userName = "";
-	
 	
 	public ListenNetwork(String userName,int port_no, int roomId) {
 		this.userName = userName;
@@ -87,14 +87,21 @@ public class ListenNetwork extends Thread {
 							if(playerCharacter == 0) // 처음 입장한 플레이어인 경우
 								playerCharacter = 1;
 							GameClientFrame.waitingPlayerNum = 1;
+							GameClientFrame.playerNames.add(userName);
 							break;
 						case "2":
-							if(playerCharacter == 0) // 2번째로 입장한 플레이어인 경우
+							String[] playerNames = cm.getData().split(" ")[2].split("//");
+							if(playerCharacter == 0) {// 2번째로 입장한 플레이어인 경우
 								playerCharacter = 2;
+								for(int i=0;i<playerNames.length;i++)
+									GameClientFrame.playerNames.add(playerNames[i]);
+							}
+							else { // 대기하고 있던 플레이어인 경우
+								GameClientFrame.playerNames.add(playerNames[1]);
+							}
 							GameClientFrame.waitingPlayerNum = 2;
 							break;
 						}
-						System.out.println(userName+" : "+playerCharacter+"번 캐릭터");
 						GameClientFrame.isChanged = true; // 화면 변화가 필요함
 						GameClientFrame.isGameScreen = true; // 게임 대기화면으로 변화
 					}
@@ -112,9 +119,13 @@ public class ListenNetwork extends Thread {
 				case "999":
 					if(GameClientFrame.isWaitingScreen) { // 대기화면에서 상대방이 나간 경우
 						System.out.println("999 받음 => "+cm.getData());
-						if(cm.getData().equals("1")) {
+						if(cm.getData().split(" ")[0].equals("1")) {
 							playerCharacter = 1;
 							GameClientFrame.waitingPlayerNum = 1;
+							String exitPlayerName = cm.getData().split(" ")[1];
+							System.out.println(GameClientFrame.playerNames.size());
+							GameClientFrame.gameScreenPane.removePlayerList(exitPlayerName);
+							GameClientFrame.playerNames.remove(exitPlayerName);
 						}
 						GameClientFrame.isChanged = true; // 화면 변화가 필요함
 						GameClientFrame.isGameScreen = true; // 게임 대기화면으로 변화

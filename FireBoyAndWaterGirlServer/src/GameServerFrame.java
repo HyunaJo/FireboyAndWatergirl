@@ -198,7 +198,7 @@ public class GameServerFrame extends JFrame {
 
 		public boolean Login(int roomId) {
 			GameRoom gameRoom = gameRooms.get(roomId);
-			if(gameRoom.enterRoom()) {
+			if(gameRoom.enterRoom(UserName)) {
 				gameRoom.getUserVec().add(this);
 				AppendText("새로운 참가자 " + UserName + " 입장.");
 				AppendText("[방"+gameRoom.getRoomId()+"] 참가자 "+gameRoom.getUserVec().size()+"/2");
@@ -216,12 +216,19 @@ public class GameServerFrame extends JFrame {
 		public int getPlayerNum(int roomId) { // gameRoom에 입장한 플레이어 수
 			return gameRooms.get(roomId).getUserVec().size();
 		}
+		
+		public String getUserNames(int roomId) {
+			Vector userNames = gameRooms.get(roomId).getUserNameVec();
+			return userNames.get(0)+"//"+userNames.get(1);
+		}
 
 		public void Logout() {
-			gameRooms.get(roomId).getUserVec().remove(this);
+			GameRoom gameRoom = gameRooms.get(roomId);
+			gameRoom.getUserNameVec().remove(UserName);
+			gameRoom.getUserVec().remove(this);
 			String msg = "[" + UserName + "]님이 퇴장 하였습니다.\n";
 			user_vc.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
-			ChatMsg obcm = new ChatMsg("SERVER",roomId, "999", Integer.toString(getPlayerNum(roomId)));
+			ChatMsg obcm = new ChatMsg("SERVER",roomId, "999", Integer.toString(getPlayerNum(roomId))+" "+UserName);
 			WriteAllObject(roomId, obcm); // 나를 제외한 다른 User들에게 전송
 			AppendText("사용자 " + "[" + UserName + "] 퇴장. 현재 참가자 수 " + user_vc.size());
 		}
@@ -383,8 +390,18 @@ public class GameServerFrame extends JFrame {
 						if(Login(cm.roomId)) { // 로그인 성공시
 							this.roomId = cm.roomId;
 							int waitingPlayerNum = getPlayerNum(cm.roomId);
-							obcm = new ChatMsg("SERVER", cm.roomId, "100", ALLOW_LOGIN_MSG+" "+waitingPlayerNum);
-							WriteAllObject(cm.roomId, obcm);
+							switch(waitingPlayerNum) {
+							case 1: 
+								obcm = new ChatMsg("SERVER", cm.roomId, "100", ALLOW_LOGIN_MSG+" "+waitingPlayerNum);
+								WriteAllObject(cm.roomId, obcm);
+								break;
+							case 2:
+								obcm = new ChatMsg("SERVER", cm.roomId, "100", ALLOW_LOGIN_MSG+" "+waitingPlayerNum+" "+getUserNames(cm.roomId));
+								WriteAllObject(cm.roomId, obcm);
+								break;
+							}
+							
+							
 						}
 						else { // 로그인 실패 시 
 							obcm = new ChatMsg("SERVER", cm.roomId, "100", DENY_LOGIN_MSG);
