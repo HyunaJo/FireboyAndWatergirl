@@ -25,7 +25,10 @@ public class GameClientFrame extends JFrame{
 	public static boolean isPlayingScreen;
 	public static int roomId;
 	public static String userName;
-	public static int waitingPlayerNum; // 기다리는 사람 수
+
+	public static int userNum; // 첫번째 유저인지, 두번째 유저인지
+	public static int waitingPlayerNum;
+
 
 	public static GameScreenPanel gameScreenPane = null;
 	public static ArrayList<String> playerNames = new ArrayList<String>();
@@ -57,7 +60,7 @@ public class GameClientFrame extends JFrame{
 			while(true) {
 				
 				if(isChanged) { // 화면에 변화가 필요할 때
-					
+					System.out.println("change 된 사항이 있어!");
 					isChanged = false;	
 					selectScreen(); // 변경될 화면 선택
 				}
@@ -75,7 +78,9 @@ public class GameClientFrame extends JFrame{
 		}	
 	}
 	
+
 	static void init() {
+
 		isHomeScreen = false; // 홈화면
 		isGameScreen = false; // 서버 선택 후 입장한 화면
 		isNextStage = false;
@@ -90,6 +95,7 @@ public class GameClientFrame extends JFrame{
 	public void selectScreen() {
 		if (isHomeScreen) { // 홈화면
 			isHomeScreen = false;
+			System.out.println("홈화면으로 바뀌어야해!");
 			setContentPane(new GameIntroPanel());
 		}
 		else if (isGameScreen) { // 대기화면
@@ -107,6 +113,10 @@ public class GameClientFrame extends JFrame{
 		}
 		else if (isNextStage) {
 			isNextStage = false;
+		}
+		else if (isPlayingScreen) {
+			isPlayingScreen = false;
+			gameScreenPane.changeToPlaypanel();
 		}
 	}
 }

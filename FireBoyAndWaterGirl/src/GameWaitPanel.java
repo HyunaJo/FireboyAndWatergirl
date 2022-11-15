@@ -1,9 +1,13 @@
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class GameWaitPanel extends JPanel{
@@ -32,11 +36,20 @@ public class GameWaitPanel extends JPanel{
 	private ImageIcon totalPlayerIcon;
 	private String totalPlayerImgPath = "src/static/image/text/2.png";
 	 
+	private ImageIcon startBtnIcon;
+	private ImageIcon resizeStartBtnIcon;
+	
+	private ImageIcon startBtnClickedIcon;
+	private ImageIcon resizeStartBtnClickedIcon;
+	
+	JButton gameStartBtn = null;
+	
 	public GameWaitPanel() {
 		setSize(717, 563); 
 		setLayout(null);
 		setVisible(true);
 		setBackground(Color.BLACK);
+		setElementsImages();
 		
 		watergirlLabel.setBounds(232,214,100,100);
 	    watergirlIcon = new ImageIcon(new ImageIcon(watergirlImgPath).getImage().getScaledInstance(watergirlLabel.getWidth(),watergirlLabel.getHeight(),Image.SCALE_DEFAULT));
@@ -80,5 +93,56 @@ public class GameWaitPanel extends JPanel{
 		}
 		waitPlayerLabel.setIcon(waitPlayerIcon);
 		add(waitPlayerLabel);
+	}
+	
+	public void addGameStartBtn() {
+		if (gameStartBtn == null) {
+			if (GameClientFrame.userNum == 1) {
+				gameStartBtn = new JButton(resizeStartBtnIcon); // 게임 시작 권한 있음
+				gameStartBtn.addMouseListener(new MouseAdapter() { // game start 버튼 눌렀을 때 동작
+					
+					public void mouseEntered(MouseEvent e) {
+						gameStartBtn.setIcon(resizeStartBtnClickedIcon);
+					}
+					
+					public void mouseExited(MouseEvent e) {
+						gameStartBtn.setIcon(resizeStartBtnIcon);
+					}
+					
+					public void mousePressed(MouseEvent e) {
+						
+						ChatMsg obcm = new ChatMsg(GameClientFrame.userName, GameClientFrame.roomId, "300", "게임을 시작합니다."); // gameRoom 입장 시도
+						ListenNetwork.SendObject(obcm);
+						gameStartBtn.setEnabled(false);
+						
+					}
+				});
+				
+				gameStartBtn.setContentAreaFilled(false);
+				gameStartBtn.setBorderPainted(false);
+				gameStartBtn.setFocusPainted(false);
+				gameStartBtn.setOpaque(false);
+				gameStartBtn.setBounds(239,428,150,55);
+				add(gameStartBtn);
+			}
+			
+			// 둘 다한테 채팅창에 띄우기
+			
+		}
+		
+	}
+	
+	private void setElementsImages() {
+		
+		 startBtnIcon = new ImageIcon("src/static/image/elements/unclickedStartBtn.png");
+		 resizeStartBtnIcon = resizeImage(startBtnIcon,150,55);
+		 
+		 startBtnClickedIcon = new ImageIcon("src/static/image/elements/clickedStartBtn.png");
+		 resizeStartBtnClickedIcon = resizeImage(startBtnClickedIcon,150,55);
+	}
+	
+	public ImageIcon resizeImage(ImageIcon icon, int width, int height) {
+		
+		 return new ImageIcon(icon.getImage().getScaledInstance(width,height,Image.SCALE_SMOOTH));
 	}
 }

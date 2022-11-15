@@ -18,11 +18,11 @@ public class ListenNetwork extends Thread {
 	private static final String ALLOW_LOGIN_MSG = "ALLOW";
 	private static final String DENY_LOGIN_MSG = "DENY";
 
-	private Socket socket;  // 연결소켓
-	private InputStream is;
-	private OutputStream os;
-	private ObjectInputStream ois;
-	private ObjectOutputStream oos;
+	public static Socket socket;  // 연결소켓
+	public static InputStream is;
+	public static OutputStream os;
+	public static ObjectInputStream ois;
+	public static ObjectOutputStream oos;
 	
 //	public boolean isLogin = false;
 	private String userName = "";
@@ -51,6 +51,7 @@ public class ListenNetwork extends Thread {
 	public void run() {
 		
 		while (true) {
+			System.out.println("메시지 대기중...");
 			try {
 				Object obcm = null;
 				String msg = null;
@@ -102,6 +103,10 @@ public class ListenNetwork extends Thread {
 							GameClientFrame.waitingPlayerNum = 2;
 							break;
 						}
+						
+						System.out.println(userName+" : "+playerCharacter+"번 캐릭터");
+						GameClientFrame.userNum = playerCharacter;
+
 						GameClientFrame.isChanged = true; // 화면 변화가 필요함
 						GameClientFrame.isGameScreen = true; // 게임 대기화면으로 변화
 					}
@@ -112,10 +117,11 @@ public class ListenNetwork extends Thread {
 						return;
 					}
 					break;
-//				case "300": // Image 첨부
-//					AppendText("[" + cm.getId() + "]");
-//					AppendImage(cm.img);
-//					break;
+				case "300": // 게임 시작에 대한 응답 -> 게임 플레이화면으로 전환
+					System.out.println("게임 스타트에 대한 응답을 받았다!!!!");
+					GameClientFrame.isChanged = true;
+					GameClientFrame.isPlayingScreen = true;
+					break;
 				case "999":
 					if(GameClientFrame.isWaitingScreen) { // 대기화면에서 상대방이 나간 경우
 						System.out.println("999 받음 => "+cm.getData());
@@ -156,7 +162,7 @@ public class ListenNetwork extends Thread {
 		SendObject(obcm);
 	}
 	
-	public void SendObject(Object ob) { // 서버로 메세지를 보내는 메소드
+	public static void SendObject(Object ob) { // 서버로 메세지를 보내는 메소드
 		try {
 			oos.writeObject(ob);
 		} catch (IOException e) {

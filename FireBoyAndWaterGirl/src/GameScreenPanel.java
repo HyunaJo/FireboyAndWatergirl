@@ -4,14 +4,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 // 서버 입장 이후 게임하는 화면 (대기, 게임, 채팅...)
 public class GameScreenPanel extends JPanel{
+
 	private GameWaitPanel gameWaitPane;
 	private GameInfoPanel gameInfoPane;
-	
+	private GamePlayPanel gamePlayPane = null;
+
 	public GameScreenPanel(int roomId, String userName) {
 		setSize(GameClientFrame.SCREEN_WIDTH,GameClientFrame.SCREEN_HEIGHT);
 		System.out.println(GameClientFrame.SCREEN_WIDTH+","+GameClientFrame.SCREEN_HEIGHT);
@@ -51,9 +54,33 @@ public class GameScreenPanel extends JPanel{
 	
 	public void changeWaitPlayerNum() {
 		gameWaitPane.changePlayerNum(GameClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
+		if (GameClientFrame.waitingPlayerNum == 2) {
+			gameWaitPane.addGameStartBtn();
+		}
 		this.repaint();
 	}
 	
+	public void changeToPlaypanel() {
+		
+		remove(gameWaitPane);
+		if(gamePlayPane == null) {
+			gamePlayPane = new GamePlayPanel();
+			gamePlayPane.setBounds(0, 0, gamePlayPane.getWidth(), gamePlayPane.getHeight());
+			add(gamePlayPane);
+			addKeyListener(gamePlayPane.testKey);
+			gamePlayPane.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					System.out.println("mouse click");
+					requestFocus();
+					setFocusable(true);
+				}
+			});
+		}
+		this.repaint();
+	}
+	
+
 	public void changePlayerList() {
 		gameInfoPane.changePlayerList(GameClientFrame.playerNames);
 		this.repaint();
@@ -63,4 +90,5 @@ public class GameScreenPanel extends JPanel{
 		gameInfoPane.removePlayerList(name);
 		this.repaint();
 	}
+
 }
