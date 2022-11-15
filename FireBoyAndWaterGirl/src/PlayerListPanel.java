@@ -33,13 +33,14 @@ public class PlayerListPanel extends JPanel{
 	}
 	
 	public void addPlayerLabel(int idx, String name) {
-		
 		switch(idx) {
 		case 1:
-			player1NameLabel = new JLabel(name);
-			player1NameLabel.setForeground(Color.WHITE);
-			player1NameLabel.setBounds(65,40,161,15);
-			add(player1NameLabel);
+			if(player1NameLabel==null) {
+				player1NameLabel = new JLabel(name);
+				player1NameLabel.setForeground(Color.WHITE);
+				player1NameLabel.setBounds(65,40,161,15);
+				add(player1NameLabel);
+			}
 			break;
 		case 2:
 			player2NameLabel = new JLabel(name);
