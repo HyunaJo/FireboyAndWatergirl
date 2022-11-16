@@ -80,10 +80,8 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	            	System.out.println("키가 눌림");
 	                switch(e.getKeyCode()) {
 	                    case KeyEvent.VK_UP:
-	                    	if(jumpThread!=null) {
-	                    		jumpThread = new JumpThread();
-		                    	jumpThread.start();
-	                    	}
+	                    	jumpThread = new JumpThread();
+		                    jumpThread.start();
 //	                        ypos-= 8;
 	                        break;
 	                    case KeyEvent.VK_DOWN:
