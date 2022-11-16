@@ -69,13 +69,13 @@ public class GameInfoPanel extends JPanel {
 	public void setServerName(int serverNum) { // 서버 이름 이미지 붙이기
 		String serverNameImgPath = "";
 		switch (serverNum) {
-		case 1:
+		case 0:
 			serverNameImgPath = "server1.png";
 			break;
-		case 2:
+		case 1:
 			serverNameImgPath = "server2.png";
 			break;
-		case 3:
+		case 2:
 			serverNameImgPath = "server3.png";
 			break;
 		}
