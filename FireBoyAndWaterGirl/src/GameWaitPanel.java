@@ -44,8 +44,11 @@ public class GameWaitPanel extends JPanel{
 	
 	JButton gameStartBtn = null;
 	
+	public final int WIDTH = 717;
+	public final int HEIGHT = 563;
+	
 	public GameWaitPanel() {
-		setSize(717, 563); 
+		setSize(WIDTH, HEIGHT); 
 		setLayout(null);
 		setVisible(true);
 		setBackground(Color.BLACK);
@@ -122,7 +125,7 @@ public class GameWaitPanel extends JPanel{
 				gameStartBtn.setBorderPainted(false);
 				gameStartBtn.setFocusPainted(false);
 				gameStartBtn.setOpaque(false);
-				gameStartBtn.setBounds(239,428,150,55);
+				gameStartBtn.setBounds(WIDTH/2 - gameStartBtn.getIcon().getIconWidth()/2,428,150,55);
 				add(gameStartBtn);
 			}
 			
