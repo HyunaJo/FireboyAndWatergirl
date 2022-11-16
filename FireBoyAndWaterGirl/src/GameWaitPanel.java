@@ -44,8 +44,8 @@ public class GameWaitPanel extends JPanel{
 	
 	JButton gameStartBtn = null;
 	
-	public final int WIDTH = 717;
-	public final int HEIGHT = 563;
+	public final int WIDTH = 713;
+	public final int HEIGHT = 544;
 	
 	public GameWaitPanel() {
 		setSize(WIDTH, HEIGHT); 

@@ -1,11 +1,20 @@
 import javax.swing.JPanel;
+
+import MapObject.Block;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class GamePlayPanel extends JPanel implements Runnable{
 	   
-	private final int WIDTH = 717;
-	private final int HEIGHT = 563;
+	private final int WIDTH = 713;
+	private final int HEIGHT = 544;
+	
+	private Map map;
+	private ArrayList<Block> blocks = null;
+	
+
 	public KeyAdapter testKey;
 	
 	   //게임 제어를 위한 변수
@@ -20,7 +29,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	    // 이미지 파일 불러오는 툴킷.
 	   Toolkit imageTool = Toolkit.getDefaultToolkit();
 	   Image character = imageTool.getImage("src/static/image/character/water_girl_character.png");
-	   Image map = imageTool.getImage("src/static/image/background/game_play_background.png");
+	   Image mapImg = imageTool.getImage("src/static/image/background/game_play_background.png");
 	  
 	   // 이미지 버퍼
 	   Image buffImg;
@@ -62,6 +71,10 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	      cnt=0;
 	      delay=17;// 17/1000초 = 58 (프레임/초)
 	      keybuff=0;
+	      
+	      //맵 설정
+	      map = new Map("src/resource/map1.txt");
+	      blocks = map.getBlocks();
 
 	      mainwork=new Thread(this);
 	      mainwork.start();
@@ -119,8 +132,12 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	    @Override
 	    public void update(Graphics g) {
 	        buffG.clearRect(0, 0, WIDTH, HEIGHT); // 백지화
-	        buffG.drawImage(map,0,0, this);
+	        buffG.drawImage(mapImg,0,0, this);
 	        buffG.drawImage(character,xpos,ypos, this);
+	        
+	        for (Block block : blocks)
+	        	buffG.drawImage(block.getImg(),block.getX(),block.getY(),this);
+	       
 	        g.drawImage(buffImg,0,0,this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. ( 도화지에 이미지를 출력 )
 	        repaint();
 	    }
