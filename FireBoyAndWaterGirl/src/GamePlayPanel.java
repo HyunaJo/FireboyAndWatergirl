@@ -15,11 +15,12 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	   long pretime;//루프 간격을 조절하기 위한 시간 체크값
 	   int keybuff;//키 버퍼값
 	   Thread mainwork;
+	   JumpThread jumpThread = null;
 
 	    // 이미지 파일 불러오는 툴킷.
 	   Toolkit imageTool = Toolkit.getDefaultToolkit();
 	   Image character = imageTool.getImage("src/static/image/character/water_girl_character.png");
-	   Image map = imageTool.getImage("src/static/image/background/game_play_background.png");
+	   Image map = imageTool.getImage("src/static/image/background/gamePlayBackground.jpg");
 	  
 	   // 이미지 버퍼
 	   Image buffImg;
@@ -57,7 +58,6 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	    
 	    
 	    public void systeminit(){//프로그램 초기화
-
 	      status=0;
 	      cnt=0;
 	      delay=17;// 17/1000초 = 58 (프레임/초)
@@ -80,7 +80,11 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	            	System.out.println("키가 눌림");
 	                switch(e.getKeyCode()) {
 	                    case KeyEvent.VK_UP:
-	                        ypos-= 8;
+	                    	if(jumpThread!=null) {
+	                    		jumpThread = new JumpThread();
+		                    	jumpThread.start();
+	                    	}
+//	                        ypos-= 8;
 	                        break;
 	                    case KeyEvent.VK_DOWN:
 	                        ypos+=8;
@@ -118,22 +122,45 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	    public void update(Graphics g) {
 	        buffG.clearRect(0, 0, WIDTH, HEIGHT); // 백지화
 	        buffG.drawImage(map,0,0, this);
-	        buffG.drawImage(character,xpos,ypos, this); // 유저 비행기 그리기.
+	        buffG.drawImage(character,xpos,ypos, this);
 	        g.drawImage(buffImg,0,0,this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. ( 도화지에 이미지를 출력 )
 	        repaint();
 	    }
+	    
+	    private class JumpThread extends Thread{
+	    	private int jumpLimit = 50; // jumpLimit번 위로 움직이고 jumpLimit번 다시 아래로 움직임
+	    	private int changeLoc = 5; // 한번 움직일 때 changeLoc만큼 움직이기
+	    	private int changeNum = 0; // 현재 움직인 횟수
+	    	private boolean isJumping = true; // 점프 중인가
+	    	
+	    	public void run() {
+	    		while(true) {
+	    			if(changeNum==50) {
+	    				isJumping = false;
+	    				changeNum = 0;
+	    			}else {
+	    				if(isJumping) {
+	    					ypos-=changeLoc;
+	    					System.out.println("ypos = "+ypos+" changeNum = "+changeNum);
+	    					changeNum++;
+	    				}
+	    				else {
+	    					ypos+=changeLoc;
+	    					System.out.println(ypos);
+	    					changeNum++;
+	    				}
+	    			}
+	    			if(isJumping==false && changeNum==50) {
+	    				break;
+	    			}
+	    			try {
+						sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+	    		}
+	    	}
+	    }
+	    
+	    
 }
-
-//import javax.swing.JPanel;
-//import java.awt.*;
-//import java.awt.event.*;
-//
-//public class GamePlayPanel extends JPanel{
-//	private final int WIDTH = 717;
-//	private final int HEIGHT = 563;
-//	
-//	public GamePlayPanel() {
-//		setSize(WIDTH,HEIGHT);
-//	}
-//
-//}
