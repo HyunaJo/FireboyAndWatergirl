@@ -21,7 +21,7 @@ public class GameScreenPanel extends JPanel{
 		setLayout(null);
 		setVisible(true);
 
-		// 게임 대기 화면 (오른쪽)
+		// 게임 대기 화면 (왼쪽)
 		gameWaitPane = new GameWaitPanel();
 //		GamePlayPanel gameWaitPane = new GamePlayPanel();
 //		gameWaitPane.setBounds(0, 0, gameWaitPane.getWidth(), gameWaitPane.getHeight());
@@ -42,14 +42,13 @@ public class GameScreenPanel extends JPanel{
 //		
 //		});
 		
-		// 게임 정보 화면(왼쪽) (서버 정보, 홈버튼, 채팅...)
+		// 게임 정보 화면(오른쪽) (서버 정보, 홈버튼, 채팅...)
 		gameInfoPane = new GameInfoPanel();
 		gameInfoPane.setBounds(gameWaitPane.getWidth(), 0, gameInfoPane.getWidth(), gameInfoPane.getHeight());
 		gameInfoPane.setServerName(roomId);
 		gameInfoPane.setUserName(userName);
 		add(gameInfoPane);
 		changePlayerList();
-				
 	}
 	
 	public void changeWaitPlayerNum() {
@@ -61,7 +60,6 @@ public class GameScreenPanel extends JPanel{
 	}
 	
 	public void changeToPlaypanel() {
-		
 		remove(gameWaitPane);
 		if(gamePlayPane == null) {
 			gamePlayPane = new GamePlayPanel();

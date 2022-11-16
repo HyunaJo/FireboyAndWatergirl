@@ -24,7 +24,18 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	   long pretime;//루프 간격을 조절하기 위한 시간 체크값
 	   int keybuff;//키 버퍼값
 	   Thread mainwork;
-	   JumpThread jumpThread = null;
+	   MoveThread moveThread = new MoveThread();
+	   boolean isMovingRight = false;
+	   boolean isMovingLeft = false;
+	   boolean isJumping = false;
+	   boolean isFalling = false;
+	   boolean isLand = true;
+	   
+	   int resetTotalDistance = 100;
+	   int jumpingTotalDistance = resetTotalDistance;
+	   int jumpingDist = 3;
+	   int fallingDist = 2;
+	   int xmovingDist = 2;
 
 	    // 이미지 파일 불러오는 툴킷.
 	   Toolkit imageTool = Toolkit.getDefaultToolkit();
@@ -86,6 +97,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	        setSize(WIDTH,HEIGHT);
 	        // 프레임의 x버튼 누르면 프로세스 종료.
 	        systeminit();
+	        moveThread.start();
 	        
 	        testKey = new KeyAdapter() {
 	            @Override
@@ -93,28 +105,42 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	            	System.out.println("키가 눌림");
 	                switch(e.getKeyCode()) {
 	                    case KeyEvent.VK_UP:
-	                    	jumpThread = new JumpThread();
-		                    jumpThread.start();
+	                    	if(!isJumping && !isFalling)
+	                    		isJumping = true;
 //	                        ypos-= 8;
 	                        break;
 	                    case KeyEvent.VK_DOWN:
 	                        ypos+=8;
 	                        break;
 	                    case KeyEvent.VK_LEFT:
-	                    	 System.out.println("left 키 눌림 "); 
-	                    	character = imageTool.getImage("src/static/image/character/water girl_run left.gif");
-	                        xpos-=8;
+	                    	 System.out.println("left 키 눌림 ");
+	                    	 if(isMovingRight)
+	                    		 isMovingRight=false;
+	                    	 isMovingLeft = true;
 	                        break;
 	                    case KeyEvent.VK_RIGHT:
 	                    	 System.out.println("right 키 눌림"); 
-	                    	character = imageTool.getImage("src/static/image/character/water girl_run right.gif");
-	                        xpos+=8;
+	                    	 if(isMovingLeft)
+	                    		 isMovingLeft=false;
+	                    	 isMovingRight = true;
+	                    	
+//	                    	xpos+=8;
 	                        break;
 	                }
 	            }
 	            @Override
 	            public void keyReleased(KeyEvent e) {
-	            	character = imageTool.getImage("src/static/image/character/water_girl_character.png");
+	            	switch(e.getKeyCode()) {
+                    case KeyEvent.VK_RIGHT:
+                    	 System.out.println("right 키 그만 누름"); 
+                    	 isMovingRight = false;
+                    	 break;
+                    case KeyEvent.VK_LEFT:
+                    	System.out.println("left 키 그만 누름"); 
+                   	 	isMovingLeft = false;
+                   	 	break;
+                }
+	            	
 	            }
 	        };
 	        // 키 어댑터 ( 키 처리용 )
@@ -142,40 +168,122 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	        repaint();
 	    }
 	    
-	    private class JumpThread extends Thread{
-	    	private int jumpLimit = 50; // jumpLimit번 위로 움직이고 jumpLimit번 다시 아래로 움직임
-	    	private int changeLoc = 5; // 한번 움직일 때 changeLoc만큼 움직이기
-	    	private int changeNum = 0; // 현재 움직인 횟수
-	    	private boolean isJumping = true; // 점프 중인가
-	    	
+	    private class MoveThread extends Thread{
 	    	public void run() {
 	    		while(true) {
-	    			if(changeNum==50) {
-	    				isJumping = false;
-	    				changeNum = 0;
-	    			}else {
-	    				if(isJumping) {
-	    					ypos-=changeLoc;
-	    					System.out.println("ypos = "+ypos+" changeNum = "+changeNum);
-	    					changeNum++;
-	    				}
-	    				else {
-	    					ypos+=changeLoc;
-	    					System.out.println(ypos);
-	    					changeNum++;
-	    				}
-	    			}
-	    			if(isJumping==false && changeNum==50) {
-	    				break;
-	    			}
+	    			setCharacterImg();
+	    			if(isJumping)
+	    				jumping();
+	    			if(isFalling)
+	    				falling();
+	    			if(isMovingLeft||isMovingRight)
+	    				xMoving();
 	    			try {
 						sleep(10);
 					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 	    		}
 	    	}
 	    }
+	    
+	    public void setCharacterImg() {
+	    	if(isMovingLeft) {
+	    		character = imageTool.getImage("src/static/image/character/water girl_run left.gif");
+	    	}
+	    	else if(isMovingRight) {
+	    		character = imageTool.getImage("src/static/image/character/water girl_run right.gif");
+	    	}
+	    	else {
+	    		character = imageTool.getImage("src/static/image/character/water_girl_character.png");
+	    	}
+	    }
+	    
+	    public void resetTotalJumpDist() {
+	    	jumpingTotalDistance = resetTotalDistance;
+	    }
+	    
+	    public void jumping() {
+	    	if(jumpingTotalDistance <= 0) {
+	    		isJumping = false;
+	    		isFalling = true;
+	    		resetTotalJumpDist();
+	    	}
+	    	else {
+	    		ypos -= jumpingDist;
+	    		jumpingTotalDistance -= jumpingDist;
+	    	}
+	    }
+	    
+	    public void falling() {
+	    	if(jumpingTotalDistance <= 0) {
+	    		isFalling = false;
+	    		resetTotalJumpDist();
+	    	}
+	    	else {
+	    		ypos += fallingDist;
+	    		jumpingTotalDistance -= fallingDist;
+	    	}
+	    }
+	    
+	    public void xMoving() {
+	    	if(isMovingRight) {
+	    		xpos += xmovingDist;
+	    	}
+	    	else if(isMovingLeft) {
+	    		xpos -= xmovingDist;
+	    	}
+	    }
+	    
+//	    private class JumpThread extends Thread{
+//	    	
+//
+//	    	
+//	    	public void run() {
+//	    		while(true) {
+//	    			if(changeNum==jumpLimit) {
+//	    				isJumping = false;
+//	    				changeNum = 0;
+//	    			}else {
+//	    				if(isJumping) {
+//	    					ypos-=changeLoc;
+//	    					changeNum++;
+//	    				}
+//	    				else {
+//	    					ypos+=changeLoc;
+//	    					changeNum++;
+//	    				}
+//	    			}
+//	    			if(isJumping==false && changeNum==jumpLimit) {
+//	    				break;
+//	    			}
+//	    			try {
+//						sleep(10);
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//					}
+//	    		}
+//	    	}
+//	    }
+//	    
+//	    private class XMoveThread extends Thread{
+//	    	public void run() {
+//	    		while(true) {
+//	    			try {
+//	    				if(isMovingRight) {
+//	    					xpos+=3;
+//	    				}
+//	    				else if(isMovingLeft) {
+//	    					xpos-=3;
+//	    				}
+//						sleep(20);
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//					}
+//	    		}
+//	    	}
+//	    }
 	    
 	    
 }
