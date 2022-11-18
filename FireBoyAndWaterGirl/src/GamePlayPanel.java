@@ -212,13 +212,13 @@ public class GamePlayPanel extends JPanel implements Runnable{
         
         switch(opponentInfo.getState()) {
         case LEFT:
-        	character = imageTool.getImage(myInfo.getRunLeftImgPath());
+        	opponent = imageTool.getImage(opponentInfo.getRunLeftImgPath());
         	break;
         case RIGHT:
-        	character = imageTool.getImage(myInfo.getRunRightImgPath());
+        	opponent = imageTool.getImage(opponentInfo.getRunRightImgPath());
         	break;
         case FRONT:
-        	character = imageTool.getImage(myInfo.getCharacterImgPath());
+        	opponent = imageTool.getImage(opponentInfo.getCharacterImgPath());
         	break;
         }
         buffG.drawImage(opponent, opponentXpos, opponentYpos, this);
@@ -305,6 +305,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
     }
     
     public void setMoving(int x, int y, State type) {
+    	System.out.println("setMoving이 불림");
     	opponentXpos = x;
     	opponentYpos = y;
     	opponentInfo.setState(type);

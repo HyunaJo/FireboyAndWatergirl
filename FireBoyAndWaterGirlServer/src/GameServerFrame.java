@@ -280,8 +280,12 @@ public class GameServerFrame extends JFrame {
 			int userVecSize = gameRoomUserVec.size();
 			for (int i = 0; i < userVecSize; i++) {
 				UserService user = (UserService) gameRoomUserVec.elementAt(i);
-				if (user != this)
+				if (user != this) {
+					System.out.println("제대로 정보를 보내고 있어요!!");
+					System.out.println("userName : "+user.UserName);
 					user.WriteOneObject(ob);
+				}
+				System.out.println("user가 this라 정보를 못보내는 중");
 			}
 		}
 
@@ -424,7 +428,6 @@ public class GameServerFrame extends JFrame {
 									break;
 								}
 								
-							
 							}
 							else { // 로그인 실패 시 
 								obcm = new ChatMsg("SERVER", cm.roomId, "100", DENY_LOGIN_MSG);

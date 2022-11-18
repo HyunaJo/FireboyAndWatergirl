@@ -77,6 +77,7 @@ public class ListenNetwork extends Thread {
 					msg = String.format("[%s] %s", cm.getUserName(), cm.getData());
 					System.out.println(msg);
 				}else if (obcm instanceof MovingInfo) {
+					System.out.println("obcm을 제대로 받음");
 					mi = (MovingInfo) obcm;
 				}
 				else
@@ -151,8 +152,9 @@ public class ListenNetwork extends Thread {
 				else if(mi != null) {
 					System.out.println("mi!=null");
 					System.out.println(mi);
+					System.out.println("받은 데이터: "+mi.getPosX()+ mi.getPosY()+ mi.getType());
 					GameClientFrame.gameScreenPane.setMovingInfo(mi.getPosX(), mi.getPosY(), mi.getType());
-					break;
+					//break;
 				}
 			} catch (IOException e) {
 				//AppendText("ois.readObject() error");
