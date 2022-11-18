@@ -53,6 +53,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
     int xpos = 100;
     int ypos = 100;
 
+
     boolean roof=true;//스레드 루프 정보
 
     // 스레드 파트
@@ -176,6 +177,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
         update(g);
     }
 
+
     @Override
     public void update(Graphics g) {
         buffG.clearRect(0, 0, WIDTH, HEIGHT); // 백지화
@@ -258,4 +260,5 @@ public class GamePlayPanel extends JPanel implements Runnable{
     	}
     	System.out.println(xpos+","+ypos);
     }
+
 }
