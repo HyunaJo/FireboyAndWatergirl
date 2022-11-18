@@ -3,7 +3,7 @@ import java.io.Serializable;
 enum State {LEFT, RIGHT, FRONT}
 
 public class MovingInfo implements Serializable{
-	
+	private static final long serialVersionUID = 2L;
 	private String code;
 	private int roomId;
 	private int posX;

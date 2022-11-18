@@ -280,7 +280,7 @@ public class GameServerFrame extends JFrame {
 			int userVecSize = gameRoomUserVec.size();
 			for (int i = 0; i < userVecSize; i++) {
 				UserService user = (UserService) gameRoomUserVec.elementAt(i);
-				if (user != this && user.UserStatus == "O")
+				if (user != this)
 					user.WriteOneObject(ob);
 			}
 		}
@@ -369,24 +369,7 @@ public class GameServerFrame extends JFrame {
 		public void run() {
 			while (true) { // 사용자 접속을 계속해서 받기 위해 while문
 				try {
-					// String msg = dis.readUTF();
-//					byte[] b = new byte[BUF_LEN];
-//					int ret;
-//					ret = dis.read(b);
-//					if (ret < 0) {
-//						AppendText("dis.read() < 0 error");
-//						try {
-//							dos.close();
-//							dis.close();
-//							client_socket.close();
-//							Logout();
-//							break;
-//						} catch (Exception ee) {
-//							break;
-//						} // catch문 끝
-//					}
-//					String msg = new String(b, "euc-kr");
-//					msg = msg.trim(); // 앞뒤 blank NULL, \n 모두 제거
+
 					Object obcm = null;
 					String msg = null;
 					ChatMsg cm = null;
@@ -396,25 +379,33 @@ public class GameServerFrame extends JFrame {
 						break;
 					try {
 						obcm = ois.readObject();
+						System.out.println("obcm에 담는 것 성공!!");
 						//System.out.println(obcm instanceof ChatMsg);
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
+						System.out.println("ois.readObject를 실패했다!!!");
 						e.printStackTrace();
 						return;
 					}
-					if (obcm == null)
+					if (obcm == null) {
+						System.out.println("Obcm은 null이다!!!!");
 						break;
+					}
 					if (obcm instanceof ChatMsg) {
+						System.out.println("Obcm은 ChatMsg다!!!!");
 						cm = (ChatMsg) obcm;
 						AppendObject(cm);
 					} 
 					else if (obcm instanceof MovingInfo) {
+						
+						System.out.println("Obcm은 MovingInfo다!!!!");
 						mi = (MovingInfo)obcm;
 						AppendMovingInfo(mi);
 					}
-					else
+					else {
+						System.out.println("아무것도 아니다!!!!!!!!!");
 						continue;
-					
+					}
 					if(cm != null) {
 						if (cm.code.matches("100")) { // login
 							UserName = cm.UserName;
@@ -497,6 +488,7 @@ public class GameServerFrame extends JFrame {
 						} 
 					} // end of cm != null..
 					else if (mi != null) {
+						System.out.println("mi가 NULL이 아닙니다!!!");
 						WriteOtherObject(mi.getRoomId(),obcm);
 					}
 					
