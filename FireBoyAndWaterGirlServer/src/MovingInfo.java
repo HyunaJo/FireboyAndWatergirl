@@ -19,4 +19,32 @@ public class MovingInfo implements Serializable{
 		this.characterNum = characterNum;
 		this.type = type;	
 	}
+
+	public String getCode() {
+		return code;
+	}
+
+
+	public int getRoomId() {
+		return roomId;
+	}
+
+
+	public int getPosX() {
+		return posX;
+	}
+
+
+	public int getPosY() {
+		return posY;
+	}
+
+	public int getCharacterNum() {
+		return characterNum;
+	}
+
+	public State getType() {
+		return type;
+	}
+
 }
