@@ -39,10 +39,12 @@ public class GamePlayPanel extends JPanel implements Runnable{
 
     // 이미지 파일 불러오는 툴킷.
    Toolkit imageTool = Toolkit.getDefaultToolkit();
+   PlayerInfo myInfo = new PlayerInfo();
+   PlayerInfo opponentInfo = new PlayerInfo();
+   
    Image character;
-   String characterImgPath;
-   String runRightImgPath;
-   String runLeftImgPath;
+   Image opponent;
+   
    Image mapImg = imageTool.getImage("src/static/image/background/game_play_background.png");
   
    // 이미지 버퍼
@@ -50,8 +52,11 @@ public class GamePlayPanel extends JPanel implements Runnable{
    Graphics buffG;
    
    // 플레이어 위치값.
-    int xpos = 100;
-    int ypos = 100;
+    int myXpos = 100;
+    int myYpos = 100;
+    
+    int opponentXpos = 100;
+    int opponentYpos = 100;
 
 
     boolean roof=true;//스레드 루프 정보
@@ -94,22 +99,38 @@ public class GamePlayPanel extends JPanel implements Runnable{
       // 캐릭터 설정
       switch(GameClientFrame.userNum) {
       case 1:
-    	  characterImgPath = "src/static/image/character/fire_boy_character.png";
-    	  runRightImgPath = "src/static/image/character/fire boy_run right.gif";
-    	  runLeftImgPath = "src/static/image/character/fire boy_run left.gif";
-    	  xpos = 384;
-    	  ypos = 452;
+    	  myInfo.setUserNum(1);
+    	  myInfo.setCharacterImgPath("src/static/image/character/fire_boy_character.png");
+    	  myInfo.setRunRightImgPath("src/static/image/character/fire boy_run right.gif");
+    	  myInfo.setRunLeftImgPath("src/static/image/character/fire boy_run left.gif");
+    	  myXpos = 384;
+    	  myYpos = 452;
+    	  
+    	  opponentInfo.setUserNum(2);
+    	  opponentInfo.setCharacterImgPath("src/static/image/character/water_girl_character.png");
+    	  opponentInfo.setRunRightImgPath("src/static/image/character/water girl_run right.gif");
+    	  opponentInfo.setRunLeftImgPath("src/static/image/character/water girl_run left.gif");
+    	  opponentXpos = 288;
+    	  opponentYpos = 452;
     	  break;
       case 2:
-    	  characterImgPath = "src/static/image/character/water_girl_character.png";
-    	  runRightImgPath = "src/static/image/character/water girl_run right.gif";
-    	  runLeftImgPath = "src/static/image/character/water girl_run left.gif";
-    	  xpos = 288;
-    	  ypos = 452;
+    	  myInfo.setUserNum(2);
+    	  myInfo.setCharacterImgPath("src/static/image/character/water_girl_character.png");
+    	  myInfo.setRunRightImgPath("src/static/image/character/water girl_run right.gif");
+    	  myInfo.setRunLeftImgPath("src/static/image/character/water girl_run left.gif");
+    	  myXpos = 288;
+    	  myYpos = 452;
+    	  
+    	  opponentInfo.setUserNum(1);
+    	  opponentInfo.setCharacterImgPath("src/static/image/character/fire_boy_character.png");
+    	  opponentInfo.setRunRightImgPath("src/static/image/character/fire boy_run right.gif");
+    	  opponentInfo.setRunLeftImgPath("src/static/image/character/fire boy_run left.gif");
+    	  opponentXpos = 384;
+    	  opponentYpos = 452;
     	  break;
       }
-      character = imageTool.getImage(characterImgPath);
-
+      character = imageTool.getImage(myInfo.getCharacterImgPath());
+      opponent =  imageTool.getImage(opponentInfo.getCharacterImgPath());
       mainwork=new Thread(this);
       mainwork.start();
    }
@@ -118,8 +139,13 @@ public class GamePlayPanel extends JPanel implements Runnable{
     public GamePlayPanel(){
         // 프레임의 대한 설정.
         setSize(WIDTH,HEIGHT);
+        
         // 프레임의 x버튼 누르면 프로세스 종료.
         systeminit();
+        
+        MovingInfo obcm = new MovingInfo("400", GameClientFrame.roomId, myXpos, myYpos, GameClientFrame.userNum, State.FRONT); // gameRoom 입장 시도
+		ListenNetwork.SendObject(obcm);
+		
         moveThread.start();
         
         testKey = new KeyAdapter() {
@@ -133,7 +159,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
 //	                        ypos-= 8;
                         break;
                     case KeyEvent.VK_DOWN:
-                    	ypos+=8;
+                    	myYpos+=8;
                     	break;
                     case KeyEvent.VK_LEFT:
                     	 System.out.println("left 키 눌림 ");
@@ -182,7 +208,20 @@ public class GamePlayPanel extends JPanel implements Runnable{
     public void update(Graphics g) {
         buffG.clearRect(0, 0, WIDTH, HEIGHT); // 백지화
         buffG.drawImage(mapImg,0,0, this);
-        buffG.drawImage(character,xpos,ypos, this);
+        buffG.drawImage(character, myXpos, myYpos, this);
+        
+        switch(opponentInfo.getState()) {
+        case LEFT:
+        	character = imageTool.getImage(myInfo.getRunLeftImgPath());
+        	break;
+        case RIGHT:
+        	character = imageTool.getImage(myInfo.getRunRightImgPath());
+        	break;
+        case FRONT:
+        	character = imageTool.getImage(myInfo.getCharacterImgPath());
+        	break;
+        }
+        buffG.drawImage(opponent, opponentXpos, opponentYpos, this);
         
         for (Block block : blocks)
         	buffG.drawImage(block.getImg(),block.getX(),block.getY(),this);
@@ -201,7 +240,8 @@ public class GamePlayPanel extends JPanel implements Runnable{
     				falling();
     			if(isMovingLeft||isMovingRight)
     				xMoving();
-    			
+    			MovingInfo obcm = new MovingInfo("400", GameClientFrame.roomId, myXpos, myYpos, GameClientFrame.userNum, myInfo.getState());
+    			ListenNetwork.SendObject(obcm);
     			try {
 					sleep(10);
 				} catch (InterruptedException e) {
@@ -214,13 +254,16 @@ public class GamePlayPanel extends JPanel implements Runnable{
     
     public void setCharacterImg() {
     	if(isMovingLeft) {
-    		character = imageTool.getImage(runLeftImgPath);
+    		character = imageTool.getImage(myInfo.getRunLeftImgPath());
+    		myInfo.setState(State.LEFT);
     	}
     	else if(isMovingRight) {
-    		character = imageTool.getImage(runRightImgPath);
+    		character = imageTool.getImage(myInfo.getRunRightImgPath());
+    		myInfo.setState(State.RIGHT);
     	}
     	else {
-    		character = imageTool.getImage(characterImgPath);
+    		character = imageTool.getImage(myInfo.getCharacterImgPath());
+    		myInfo.setState(State.FRONT);
     	}
     }
     
@@ -235,7 +278,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
     		resetTotalJumpDist();
     	}
     	else {
-    		ypos -= jumpingDist;
+    		myYpos -= jumpingDist;
     		jumpingTotalDistance -= jumpingDist;
     	}
     }
@@ -246,19 +289,25 @@ public class GamePlayPanel extends JPanel implements Runnable{
     		resetTotalJumpDist();
     	}
     	else {
-    		ypos += fallingDist;
+    		myYpos += fallingDist;
     		jumpingTotalDistance -= fallingDist;
     	}
     }
     
     public void xMoving() {
     	if(isMovingRight) {
-    		xpos += xmovingDist;
+    		myXpos += xmovingDist;
     	}
     	else if(isMovingLeft) {
-    		xpos -= xmovingDist;
+    		myXpos -= xmovingDist;
     	}
-    	System.out.println(xpos+","+ypos);
+//    	System.out.println(xpos+","+ypos);
+    }
+    
+    public void setMoving(int x, int y, State type) {
+    	opponentXpos = x;
+    	opponentYpos = y;
+    	opponentInfo.setState(type);
     }
 
 }

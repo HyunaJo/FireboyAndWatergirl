@@ -10,7 +10,8 @@ import javax.swing.JOptionPane;
 
 //Server Message를 수신해서 화면에 표시
 public class ListenNetwork extends Thread {
-	String ip_addr = "127.0.0.1";
+//	String ip_addr = "127.0.0.1";
+	String ip_addr = "218.159.204.53";
 	int port_no;
 	int roomId;
 	int playerCharacter = 0;
@@ -30,6 +31,8 @@ public class ListenNetwork extends Thread {
 	public ListenNetwork(String userName,int port_no, int roomId) {
 		this.userName = userName;
 		this.port_no = port_no;
+		System.out.println(ip_addr);
+		System.out.println(port_no);
 		this.roomId = roomId;
 		try {
 			socket = new Socket(ip_addr, port_no);
@@ -55,7 +58,8 @@ public class ListenNetwork extends Thread {
 			try {
 				Object obcm = null;
 				String msg = null;
-				ChatMsg cm;
+				ChatMsg cm = null;
+				MovingInfo mi = null;
 				try {
 					obcm = ois.readObject();
 					System.out.println("obcm read success");
@@ -72,70 +76,82 @@ public class ListenNetwork extends Thread {
 					cm = (ChatMsg) obcm;
 					msg = String.format("[%s] %s", cm.getUserName(), cm.getData());
 					System.out.println(msg);
-				} else
+				}else if (obcm instanceof MovingInfo) {
+					mi = (MovingInfo) obcm;
+				}
+				else
 					continue;
-				switch (cm.getCode()) {
-				case "100": // 서버 접속 결과 - allow,deny
-					System.out.println(cm.getData());
-					String loginResult = cm.getData().split(" ")[0];
-					System.out.println("loginResult = "+loginResult);
-					if(loginResult.equals(ALLOW_LOGIN_MSG)) {
-						GameClientFrame.isWaitingScreen = true;
-//						isLogin = true;
-						/* 화면 전환 */
-						switch(cm.getData().split(" ")[1]) {
-						case "1":
-							if(playerCharacter == 0) // 처음 입장한 플레이어인 경우
+				
+				if(cm != null) {
+					switch (cm.getCode()) {
+					case "100": // 서버 접속 결과 - allow,deny
+						System.out.println(cm.getData());
+						String loginResult = cm.getData().split(" ")[0];
+						System.out.println("loginResult = "+loginResult);
+						if(loginResult.equals(ALLOW_LOGIN_MSG)) {
+							GameClientFrame.isWaitingScreen = true;
+	//						isLogin = true;
+							/* 화면 전환 */
+							switch(cm.getData().split(" ")[1]) {
+							case "1":
+								if(playerCharacter == 0) // 처음 입장한 플레이어인 경우
+									playerCharacter = 1;
+								GameClientFrame.waitingPlayerNum = 1;
+								GameClientFrame.playerNames.add(userName);
+								break;
+							case "2":
+								String[] playerNames = cm.getData().split(" ")[2].split("//");
+								if(playerCharacter == 0) {// 2번째로 입장한 플레이어인 경우
+									playerCharacter = 2;
+									for(int i=0;i<playerNames.length;i++)
+										GameClientFrame.playerNames.add(playerNames[i]);
+								}
+								else { // 대기하고 있던 플레이어인 경우
+									GameClientFrame.playerNames.add(playerNames[1]);
+								}
+								GameClientFrame.waitingPlayerNum = 2;
+								break;
+							}
+							
+							System.out.println(userName+" : "+playerCharacter+"번 캐릭터");
+							GameClientFrame.userNum = playerCharacter;
+	
+							GameClientFrame.isChanged = true; // 화면 변화가 필요함
+							GameClientFrame.isGameScreen = true; // 게임 대기화면으로 변화
+						}
+						else if(loginResult.equals(DENY_LOGIN_MSG)) {
+							GameClientFrame.isWaitingScreen = false;
+	//						isLogin = false;
+							JOptionPane.showMessageDialog(null,"해당 서버는 가득 찼습니다. 다른 서버를 선택해주세요.");
+							return;
+						}
+						break;
+					case "300": // 게임 시작에 대한 응답 -> 게임 플레이화면으로 전환
+						System.out.println("게임 스타트에 대한 응답을 받았다!!!!");
+						GameClientFrame.isChanged = true;
+						GameClientFrame.isPlayingScreen = true;
+						break;
+					case "999":
+						if(GameClientFrame.isWaitingScreen) { // 대기화면에서 상대방이 나간 경우
+							System.out.println("999 받음 => "+cm.getData());
+							if(cm.getData().split(" ")[0].equals("1")) {
 								playerCharacter = 1;
-							GameClientFrame.waitingPlayerNum = 1;
-							GameClientFrame.playerNames.add(userName);
-							break;
-						case "2":
-							String[] playerNames = cm.getData().split(" ")[2].split("//");
-							if(playerCharacter == 0) {// 2번째로 입장한 플레이어인 경우
-								playerCharacter = 2;
-								for(int i=0;i<playerNames.length;i++)
-									GameClientFrame.playerNames.add(playerNames[i]);
+								GameClientFrame.waitingPlayerNum = 1;
+								String exitPlayerName = cm.getData().split(" ")[1];
+								System.out.println(GameClientFrame.playerNames.size());
+								GameClientFrame.gameScreenPane.removePlayerList(exitPlayerName);
+								GameClientFrame.playerNames.remove(exitPlayerName);
 							}
-							else { // 대기하고 있던 플레이어인 경우
-								GameClientFrame.playerNames.add(playerNames[1]);
-							}
-							GameClientFrame.waitingPlayerNum = 2;
-							break;
+							GameClientFrame.isChanged = true; // 화면 변화가 필요함
+							GameClientFrame.isGameScreen = true; // 게임 대기화면으로 변화
 						}
-						
-						System.out.println(userName+" : "+playerCharacter+"번 캐릭터");
-						GameClientFrame.userNum = playerCharacter;
-
-						GameClientFrame.isChanged = true; // 화면 변화가 필요함
-						GameClientFrame.isGameScreen = true; // 게임 대기화면으로 변화
+						break;
 					}
-					else if(loginResult.equals(DENY_LOGIN_MSG)) {
-						GameClientFrame.isWaitingScreen = false;
-//						isLogin = false;
-						JOptionPane.showMessageDialog(null,"해당 서버는 가득 찼습니다. 다른 서버를 선택해주세요.");
-						return;
-					}
-					break;
-				case "300": // 게임 시작에 대한 응답 -> 게임 플레이화면으로 전환
-					System.out.println("게임 스타트에 대한 응답을 받았다!!!!");
-					GameClientFrame.isChanged = true;
-					GameClientFrame.isPlayingScreen = true;
-					break;
-				case "999":
-					if(GameClientFrame.isWaitingScreen) { // 대기화면에서 상대방이 나간 경우
-						System.out.println("999 받음 => "+cm.getData());
-						if(cm.getData().split(" ")[0].equals("1")) {
-							playerCharacter = 1;
-							GameClientFrame.waitingPlayerNum = 1;
-							String exitPlayerName = cm.getData().split(" ")[1];
-							System.out.println(GameClientFrame.playerNames.size());
-							GameClientFrame.gameScreenPane.removePlayerList(exitPlayerName);
-							GameClientFrame.playerNames.remove(exitPlayerName);
-						}
-						GameClientFrame.isChanged = true; // 화면 변화가 필요함
-						GameClientFrame.isGameScreen = true; // 게임 대기화면으로 변화
-					}
+				}
+				else if(mi != null) {
+					System.out.println("mi!=null");
+					System.out.println(mi);
+					GameClientFrame.gameScreenPane.setMovingInfo(mi.getPosX(), mi.getPosY(), mi.getType());
 					break;
 				}
 			} catch (IOException e) {

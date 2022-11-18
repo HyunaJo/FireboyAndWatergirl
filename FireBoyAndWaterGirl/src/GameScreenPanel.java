@@ -88,5 +88,9 @@ public class GameScreenPanel extends JPanel{
 		gameInfoPane.removePlayerList(name);
 		this.repaint();
 	}
+	
+	public void setMovingInfo(int x, int y, State type) {
+		gamePlayPane.setMoving(x, y, type);
+	}
 
 }

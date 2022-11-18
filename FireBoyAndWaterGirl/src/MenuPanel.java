@@ -37,7 +37,8 @@ public class MenuPanel extends JPanel{
 	private String[] optionsToChoose = {"Server1", "Server2", "Server3"};
 	private final int BASE_PORT = 10000; // 기본 port number
 	private final int PORT_GAP = 10000; // port 사이 간격
-	private final int PORT = 30000;
+//	private final int PORT = 30000;
+	private final int PORT = 9090;
 	
 	public MenuPanel() {
 		
