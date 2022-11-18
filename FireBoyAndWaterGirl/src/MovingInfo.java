@@ -3,7 +3,7 @@ import java.io.Serializable;
 enum State {LEFT, RIGHT, FRONT}
 
 public class MovingInfo implements Serializable{
-	
+	private static final long serialVersionUID = 2L;
 	private String code;
 	private int roomId;
 	private int posX;
@@ -18,5 +18,17 @@ public class MovingInfo implements Serializable{
 		this.posY = posY;
 		this.characterNum = characterNum;
 		this.type = type;	
+	}
+	
+	public int getPosX() {
+		return posX;
+	}
+
+	public int getPosY() {
+		return posY;
+	}
+	
+	public State getType() {
+		return type;
 	}
 }
