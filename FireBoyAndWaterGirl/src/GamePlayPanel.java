@@ -1,6 +1,7 @@
 import javax.swing.JPanel;
 
 import MapObject.Block;
+import MapObject.Item;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -13,7 +14,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	
 	private Map map;
 	private ArrayList<Block> blocks = null;
-	
+	private ArrayList<Item> items = null;
 
 	public KeyAdapter testKey;
 	
@@ -95,7 +96,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
       //맵 설정
       map = new Map("src/resource/map1.txt");
       blocks = map.getBlocks();
-      
+      items = map.getItems();
       // 캐릭터 설정
       switch(GameClientFrame.userNum) {
       case 1:
@@ -225,6 +226,9 @@ public class GamePlayPanel extends JPanel implements Runnable{
         
         for (Block block : blocks)
         	buffG.drawImage(block.getImg(),block.getX(),block.getY(),this);
+        
+        for (Item item : items)
+        	buffG.drawImage(item.getImg(),item.getX(),item.getY(),this);
        
         g.drawImage(buffImg,0,0,this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. ( 도화지에 이미지를 출력 )
         repaint();

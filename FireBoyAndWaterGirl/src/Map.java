@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import MapObject.Block;
+import MapObject.Item;
 
 
 public class Map {
@@ -19,6 +20,8 @@ public class Map {
 	final static public int BLOCK_WIDTH_LENGTH = 23; //한 줄에 21개
 	
 	public ArrayList<Block> blocks =new ArrayList<>();
+	public ArrayList<Item> items =new ArrayList<>();
+	
 	public String path;
 	ArrayList<String> packet = new ArrayList<>();
 
@@ -31,6 +34,10 @@ public class Map {
 
 	public void setBlocks(ArrayList<Block> blocks) {
 		this.blocks = blocks;
+	}
+	
+	public void setItmes(ArrayList<Item> items) {
+		this.items = items;
 	}
 
 	//map.txt 파일을 읽어 내용을 담은 문자열 배열 생성
@@ -79,11 +86,21 @@ public class Map {
 				Block block = new Block(x,y);
 				blocks.add(block);
 			}
+			if(state == 2) { // 아이템일 때
+				int x = (i%BLOCK_WIDTH_LENGTH)* Block.BLOCK_WIDTH;
+				int y = (i/BLOCK_WIDTH_LENGTH)* Block.BLOCK_HEIGHT;
+				Item Item = new Item(x,y);
+				items.add(Item);
+			}
 		}
 	}
 	
 	public ArrayList getBlocks() {
 		return blocks;
+	}
+	
+	public ArrayList getItems() {
+		return items;
 	}
 	
 }
