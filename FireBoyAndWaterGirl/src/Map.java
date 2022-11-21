@@ -86,10 +86,10 @@ public class Map {
 				Block block = new Block(x,y);
 				blocks.add(block);
 			}
-			if(state == 2) { // 아이템일 때
+			if(state == 2 || state == 3) { // 아이템일 때
 				int x = (i%BLOCK_WIDTH_LENGTH)* Block.BLOCK_WIDTH;
 				int y = (i/BLOCK_WIDTH_LENGTH)* Block.BLOCK_HEIGHT;
-				Item Item = new Item(x,y);
+				Item Item = new Item(x,y,state);
 				items.add(Item);
 			}
 		}

@@ -39,7 +39,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
    boolean isFalling = false;
    boolean isLand = true;
    
-   int resetTotalDistance = 80;
+   int resetTotalDistance = 90;
    int jumpingTotalDistance = resetTotalDistance;
    int jumpingDist = 6;
    int fallingDist = 6;
@@ -93,13 +93,14 @@ public class GamePlayPanel extends JPanel implements Runnable{
 			for(int i=0;i<items.size();i++) {//Item m : items
 				
 				Item m = items.get(i);
+				if (!(m.getState()%2 == GameClientFrame.userNum%2)) continue;
+				
 				// [경우1] 플레이어가 아이템의 오른쪽에 존재
 				if (myXpos+pWith >= m.getX() && myXpos+pWith <= m.getX()+0.5*m.getWidth() 
 				&& myYpos <= m.getY() && myYpos+pHeight >= m.getY()+m.getHeight()) {
 					items.remove(m);
 					//TODO:네트워크로 사라진 아이템 인덱스 보내줘야함!!
 					//int roomId, String code, int itemIdx
-					System.out.println("아이템 지우라고 보냈다.");
 					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
 					break;
 				}
@@ -108,7 +109,6 @@ public class GamePlayPanel extends JPanel implements Runnable{
 				&& myYpos <= m.getY() && myYpos+pHeight >= m.getY()+m.getHeight()) {
 					items.remove(m);
 					//TODO:네트워크로 사라진 아이템 인덱스 보내줘야함!!
-					System.out.println("아이템 지우라고 보냈다.");
 					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
 					break;
 				}
