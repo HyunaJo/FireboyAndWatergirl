@@ -62,6 +62,46 @@ public class GamePlayPanel extends JPanel implements Runnable{
 
     boolean roof=true;//스레드 루프 정보
 
+   // =================================================================================================
+    public void gameControll() {
+		//playerWallCrushCheck();
+		//playerMonsterCrushCheck();
+		//monsterWallCrushCheck();
+		playerItemGetCheck();
+		//checkBubbleMonster();
+		
+		//if(!this.threadFlag)
+			//this.gameThread.interrupt();
+	}
+    
+    int pWith = 57;//68;
+    int pHeight = 51;//61;
+    
+    public void playerItemGetCheck() {
+		//플레이어가 무적이 아닐 때만 체크
+			for(Item m : items) {
+				
+				// [경우1] 플레이어가 아이템의 오른쪽에 존재
+				if (myXpos+pWith >= m.getX() && myXpos+pWith <= m.getX()+0.5*m.getWidth() 
+				&& myYpos <= m.getY() && myYpos+pHeight >= m.getY()+m.getHeight()) {
+					items.remove(m);
+					//TODO:네트워크로 사라진 아이템 인덱스 보내줘야함!!
+					break;
+				}
+				// [경우2] 플레이어가 아이템의 왼쪽에 존재
+				else if (myXpos >= m.getX() + 0.5*m.getWidth() && myXpos <= m.getX() + m.getWidth()
+				&& myYpos <= m.getY() && myYpos+pHeight >= m.getY()+m.getHeight()) {
+					items.remove(m);
+					//TODO:네트워크로 사라진 아이템 인덱스 보내줘야함!!
+					break;
+				}
+				else
+					continue;
+
+			}
+	}
+    
+   // =======================================================================================
     // 스레드 파트
     public void run(){
        try
@@ -70,7 +110,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
           while(roof){
              
              pretime=System.currentTimeMillis();
-
+             gameControll();
              repaint();//화면 리페인트
           
              if(System.currentTimeMillis()-pretime<delay) Thread.sleep(delay-System.currentTimeMillis()+pretime);
@@ -109,7 +149,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
     	  
     	  opponentInfo.setUserNum(2);
     	  opponentInfo.setCharacterImgPath("src/static/image/character/water_girl_character.png");
-    	  opponentInfo.setRunRightImgPath("src/static/image/character/water girl_run right.gif");
+    	  opponentInfo.setRunRightImgPath("src/static/image/character/water girl_run right1.gif");
     	  opponentInfo.setRunLeftImgPath("src/static/image/character/water girl_run left.gif");
     	  opponentXpos = 288;
     	  opponentYpos = 452;
@@ -117,7 +157,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
       case 2:
     	  myInfo.setUserNum(2);
     	  myInfo.setCharacterImgPath("src/static/image/character/water_girl_character.png");
-    	  myInfo.setRunRightImgPath("src/static/image/character/water girl_run right.gif");
+    	  myInfo.setRunRightImgPath("src/static/image/character/water girl_run right1.gif");
     	  myInfo.setRunLeftImgPath("src/static/image/character/water girl_run left.gif");
     	  myXpos = 288;
     	  myYpos = 452;
