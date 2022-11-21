@@ -92,5 +92,7 @@ public class GameScreenPanel extends JPanel{
 	public void setMovingInfo(int x, int y, State type) {
 		gamePlayPane.setMoving(x, y, type);
 	}
+	
+	
 
 }

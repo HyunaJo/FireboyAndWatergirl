@@ -1,3 +1,4 @@
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import MapObject.Block;
@@ -11,6 +12,12 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	   
 	private final int WIDTH = 713;
 	private final int HEIGHT = 544;
+	
+	private final int IMG_WIDTH = 48;
+	private final int IMG_HEIGHT = 59;
+	private final int RUN_IMG_WIDTH = 68;
+	private final int RUN_IMG_HEIGHT = 61;
+	int myWidth, myHeight;
 	
 	private Map map;
 	private ArrayList<Block> blocks = null;
@@ -32,11 +39,11 @@ public class GamePlayPanel extends JPanel implements Runnable{
    boolean isFalling = false;
    boolean isLand = true;
    
-   int resetTotalDistance = 100;
+   int resetTotalDistance = 80;
    int jumpingTotalDistance = resetTotalDistance;
    int jumpingDist = 3;
    int fallingDist = 2;
-   int xmovingDist = 2;
+   int xmovingDist = 4;
 
     // 이미지 파일 불러오는 툴킷.
    Toolkit imageTool = Toolkit.getDefaultToolkit();
@@ -111,6 +118,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
              
              pretime=System.currentTimeMillis();
              gameControll();
+             
              repaint();//화면 리페인트
           
              if(System.currentTimeMillis()-pretime<delay) Thread.sleep(delay-System.currentTimeMillis()+pretime);
@@ -192,29 +200,26 @@ public class GamePlayPanel extends JPanel implements Runnable{
         testKey = new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-            	System.out.println("키가 눌림");
+//            	System.out.println("키가 눌림");
                 switch(e.getKeyCode()) {
                     case KeyEvent.VK_UP:
                     	if(!isJumping && !isFalling)
                     		isJumping = true;
-//	                        ypos-= 8;
                         break;
                     case KeyEvent.VK_DOWN:
                     	myYpos+=8;
                     	break;
                     case KeyEvent.VK_LEFT:
-                    	 System.out.println("left 키 눌림 ");
+//                    	 System.out.println("left 키 눌림 ");
                     	 if(isMovingRight)
                     		 isMovingRight=false;
                     	 isMovingLeft = true;
                         break;
                     case KeyEvent.VK_RIGHT:
-                    	 System.out.println("right 키 눌림"); 
+//                    	 System.out.println("right 키 눌림"); 
                     	 if(isMovingLeft)
                     		 isMovingLeft=false;
                     	 isMovingRight = true;
-                    	
-//	                    	xpos+=8;
                         break;
                 }
             }
@@ -222,11 +227,11 @@ public class GamePlayPanel extends JPanel implements Runnable{
             public void keyReleased(KeyEvent e) {
             	switch(e.getKeyCode()) {
                 case KeyEvent.VK_RIGHT:
-                	 System.out.println("right 키 그만 누름"); 
+//                	 System.out.println("right 키 그만 누름"); 
                 	 isMovingRight = false;
                 	 break;
                 case KeyEvent.VK_LEFT:
-                	System.out.println("left 키 그만 누름"); 
+//                	System.out.println("left 키 그만 누름"); 
                	 	isMovingLeft = false;
                	 	break;
             	}
@@ -270,7 +275,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
         for (Item item : items)
         	buffG.drawImage(item.getImg(),item.getX(),item.getY(),this);
        
-        g.drawImage(buffImg,0,0,this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. ( 도화지에 이미지를 출력 )
+        g.drawImage(buffImg,0,0,this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. (도화지에 이미지를 출력)
         repaint();
     }
     
@@ -284,10 +289,11 @@ public class GamePlayPanel extends JPanel implements Runnable{
     				falling();
     			if(isMovingLeft||isMovingRight)
     				xMoving();
+    			System.out.println(canMove());
     			MovingInfo obcm = new MovingInfo("400", GameClientFrame.roomId, myXpos, myYpos, GameClientFrame.userNum, myInfo.getState());
     			ListenNetwork.SendObject(obcm);
     			try {
-					sleep(10);
+					sleep(30);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -355,4 +361,38 @@ public class GamePlayPanel extends JPanel implements Runnable{
     	opponentInfo.setState(type);
     }
 
+//    public void checkEdgeWalls() {
+//    	switch(myInfo.getState()) {
+//    	case LEFT:
+//    	case RIGHT:
+//    		myWidth = RUN_IMG_WIDTH;
+//    		myHeight = RUN_IMG_HEIGHT;
+//    		break;
+//    	case FRONT:
+//    		myWidth = IMG_WIDTH;
+//    		myHeight = IMG_HEIGHT;
+//    		break;
+//    	}
+//    }
+    
+    public boolean canMove() {
+    	switch(myInfo.getState()) {
+    	case LEFT:
+    	case RIGHT:
+    		myWidth = RUN_IMG_WIDTH;
+    		myHeight = RUN_IMG_HEIGHT;
+    		break;
+    	case FRONT:
+    		myWidth = IMG_WIDTH;
+    		myHeight = IMG_HEIGHT;
+    		break;
+    	}
+    	
+    	Rectangle characterRec = new Rectangle(myXpos,myYpos,myWidth-5,myHeight-5);
+		for(int i=0;i<blocks.size();i++) {
+			if(characterRec.intersects(blocks.get(i).getRectangle()))
+				return false;
+		}
+		return true;
+	}
 }
