@@ -132,6 +132,9 @@ public class ListenNetwork extends Thread {
 						GameClientFrame.isChanged = true;
 						GameClientFrame.isPlayingScreen = true;
 						break;
+					case "550":
+						GamePlayPanel.removeItem(cm.getItemIdx());
+						break;
 					case "999":
 						if(GameClientFrame.isWaitingScreen) { // 대기화면에서 상대방이 나간 경우
 							System.out.println("999 받음 => "+cm.getData());

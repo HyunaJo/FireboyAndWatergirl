@@ -11,11 +11,19 @@ class ChatMsg implements Serializable {
 	public String data;
 	public ImageIcon img;
 	public MouseEvent mouse_e;
-
+	public int itemIdx;
+	
 	public ChatMsg(String UserName, int roomId, String code, String msg) {
 		this.roomId = roomId;
 		this.code = code;
 		this.UserName = UserName;
 		this.data = msg;
+	}
+	
+	public ChatMsg(int roomId, String code, int itemIdx) {
+		this.roomId = roomId;
+		this.code = code;
+		this.itemIdx = itemIdx;
+	
 	}
 }

@@ -9,6 +9,7 @@ class ChatMsg implements Serializable {
 	private int roomId;
 	private String code; // 100:로그인, 400:로그아웃, 200:채팅메시지, 300:Image
 	private String data;
+	private int itemIdx;
 	public ImageIcon img;
 
 	public ChatMsg(String UserName,int roomId, String code, String msg) {
@@ -16,6 +17,12 @@ class ChatMsg implements Serializable {
 		this.roomId = roomId;
 		this.code = code;
 		this.data = msg;
+	}
+	
+	public ChatMsg(int roomId, String code, int itemIdx) {
+		this.roomId = roomId;
+		this.code = code;
+		this.itemIdx = itemIdx;
 	}
 	
 	public ChatMsg(String UserName,int roomId, String code) {
@@ -46,6 +53,10 @@ class ChatMsg implements Serializable {
 
 	public String getUserName() {
 		return UserName;
+	}
+	
+	public int getItemIdx() {
+		return itemIdx;
 	}
 
 	public void setId(String UserName) {

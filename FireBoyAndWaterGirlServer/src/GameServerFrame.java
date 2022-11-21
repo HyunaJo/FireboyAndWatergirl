@@ -81,7 +81,6 @@ public class GameServerFrame extends JFrame {
 				} catch (NumberFormatException | IOException e1) {
 					e1.printStackTrace();
 				}
-//				AppendText("Chat Server Running..");
 				btnServerStart.setText("Chat Server Running..");
 				btnServerStart.setEnabled(false); // 서버를 더이상 실행시키지 못 하게 막는다
 				txtPortNumber.setEnabled(false); // 더이상 포트번호 수정 못하게 막는다
@@ -281,11 +280,8 @@ public class GameServerFrame extends JFrame {
 			for (int i = 0; i < userVecSize; i++) {
 				UserService user = (UserService) gameRoomUserVec.elementAt(i);
 				if (user != this) {
-					System.out.println("제대로 정보를 보내고 있어요!!");
-					System.out.println("userName : "+user.UserName);
 					user.WriteOneObject(ob);
 				}
-				System.out.println("user가 this라 정보를 못보내는 중");
 			}
 		}
 
@@ -383,31 +379,25 @@ public class GameServerFrame extends JFrame {
 						break;
 					try {
 						obcm = ois.readObject();
-						System.out.println("obcm에 담는 것 성공!!");
+						
 						//System.out.println(obcm instanceof ChatMsg);
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
-						System.out.println("ois.readObject를 실패했다!!!");
 						e.printStackTrace();
 						return;
 					}
 					if (obcm == null) {
-						System.out.println("Obcm은 null이다!!!!");
 						break;
 					}
 					if (obcm instanceof ChatMsg) {
-						System.out.println("Obcm은 ChatMsg다!!!!");
 						cm = (ChatMsg) obcm;
 						AppendObject(cm);
 					} 
 					else if (obcm instanceof MovingInfo) {
-						
-						System.out.println("Obcm은 MovingInfo다!!!!");
 						mi = (MovingInfo)obcm;
 						AppendMovingInfo(mi);
 					}
 					else {
-						System.out.println("아무것도 아니다!!!!!!!!!");
 						continue;
 					}
 					if(cm != null) {
@@ -479,9 +469,12 @@ public class GameServerFrame extends JFrame {
 							}
 						} 
 						else if (cm.code.matches("300")) {
-							System.out.println("300을 받았어요!!!! : "+cm.roomId+" "+roomId);
 							obcm = new ChatMsg("SERVER", cm.roomId, "300", "게임을 시작합니다.");
 							WriteAllObject(cm.roomId, obcm);
+						}
+						else if (cm.code.matches("550")) {
+							obcm = new ChatMsg(cm.roomId, "550", cm.itemIdx);
+							WriteOtherObject(cm.roomId, obcm);
 						}
 						else if (cm.code.matches("999")) { // logout message 처리
 							Logout();
@@ -491,7 +484,6 @@ public class GameServerFrame extends JFrame {
 						} 
 					} // end of cm != null..
 					else if (mi != null) {
-						System.out.println("mi가 NULL이 아닙니다!!!");
 						WriteOtherObject(mi.getRoomId(),obcm);
 					}
 					
