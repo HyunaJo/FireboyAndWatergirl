@@ -41,9 +41,9 @@ public class GamePlayPanel extends JPanel implements Runnable{
    
    int resetTotalDistance = 80;
    int jumpingTotalDistance = resetTotalDistance;
-   int jumpingDist = 3;
-   int fallingDist = 2;
-   int xmovingDist = 4;
+   int jumpingDist = 6;
+   int fallingDist = 4;
+   int xmovingDist = 6;
 
     // 이미지 파일 불러오는 툴킷.
    Toolkit imageTool = Toolkit.getDefaultToolkit();
