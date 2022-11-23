@@ -1,8 +1,10 @@
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import MapObject.Block;
 import MapObject.Item;
+import MapObject.Obstacle;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -22,7 +24,8 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	private Map map;
 	private ArrayList<Block> blocks = null;
 	public static ArrayList<Item> items = null;
-
+	public static ArrayList<Obstacle> obstacles = null;
+	
 	public KeyAdapter testKey;
 	
    //게임 제어를 위한 변수
@@ -76,7 +79,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
 		//monsterWallCrushCheck();
 		playerItemGetCheck();
 		//checkBubbleMonster();
-		
+		playerObstacleCheck();
 		//if(!this.threadFlag)
 			//this.gameThread.interrupt();
 	}
@@ -89,7 +92,6 @@ public class GamePlayPanel extends JPanel implements Runnable{
     }
     
     public void playerItemGetCheck() {
-		//플레이어가 무적이 아닐 때만 체크
 			for(int i=0;i<items.size();i++) {//Item m : items
 				
 				Item m = items.get(i);
@@ -100,7 +102,6 @@ public class GamePlayPanel extends JPanel implements Runnable{
 				&& myYpos <= m.getY() && myYpos+pHeight >= m.getY()+m.getHeight()) {
 					items.remove(m);
 					//TODO:네트워크로 사라진 아이템 인덱스 보내줘야함!!
-					//int roomId, String code, int itemIdx
 					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
 					break;
 				}
@@ -118,12 +119,48 @@ public class GamePlayPanel extends JPanel implements Runnable{
 			}
 	}
     
+    public void playerObstacleCheck() {
+		//플레이어가 무적이 아닐 때만 체크
+			for(int i=0;i<obstacles.size();i++) {//Item m : items
+				
+				Obstacle o = obstacles.get(i);
+			
+				if (o.getState()%2 == GameClientFrame.userNum%2) {
+					continue;
+					
+				}
+				
+				// 플레이어가 장애물 위에 올라갔는지 판단!
+				if ((o.getX() <= myXpos && myXpos+IMG_WIDTH <= o.getX()+o.getWidth()) && (o.getY() <= myYpos+IMG_HEIGHT && myYpos+IMG_HEIGHT <= o.getY()+10)) { //&& o.getY() == myYpos + IMG_HEIGHT
+					
+					//TODO:네트워크로 죽었음(게임 오버)을 표시
+					System.out.println("1  Game Over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+					//ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
+					break;
+				}
+				else if (o.getX() <= myXpos && myXpos+RUN_IMG_WIDTH <= o.getX()+o.getWidth() ) {//&& o.getY() == myYpos + RUN_IMG_HEIGHT
+					
+					//TODO:네트워크로 죽었음(게임 오버)을 표시
+					System.out.println("2 Game Over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+					//ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
+					break;
+				}
+				else {
+					
+					System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+					System.out.println("o.getY = "+o.getY());
+					System.out.println("myYpos = "+ (myYpos+pHeight));
+					continue;
+				}
+			}
+	}
+   
+    
    // =======================================================================================
     // 스레드 파트
     public void run(){
        try
        {
-    	  System.out.println("run 함수에 들어옴"); 
           while(roof){
              
              pretime=System.currentTimeMillis();
@@ -155,6 +192,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
       map = new Map("src/resource/map1.txt");
       blocks = map.getBlocks();
       items = map.getItems();
+      obstacles = map.getObstacles();
       // 캐릭터 설정
       switch(GameClientFrame.userNum) {
       case 1:
@@ -284,6 +322,9 @@ public class GamePlayPanel extends JPanel implements Runnable{
         
         for (Item item : items)
         	buffG.drawImage(item.getImg(),item.getX(),item.getY(),this);
+        
+        for (Obstacle obstacle : obstacles)
+        	buffG.drawImage(obstacle.getImg(),obstacle.getX(),obstacle.getY(),this);
        
         g.drawImage(buffImg,0,0,this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. (도화지에 이미지를 출력)
         repaint();

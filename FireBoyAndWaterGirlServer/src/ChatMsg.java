@@ -26,4 +26,12 @@ class ChatMsg implements Serializable {
 		this.itemIdx = itemIdx;
 	
 	}
+	
+	public String getUserName() {
+		return UserName;
+	}
+
+	public String getData() {
+		return data;
+	}
 }

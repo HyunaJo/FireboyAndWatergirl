@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 
 import MapObject.Block;
 import MapObject.Item;
+import MapObject.Obstacle;
 
 
 public class Map {
@@ -21,6 +22,7 @@ public class Map {
 	
 	public ArrayList<Block> blocks =new ArrayList<>();
 	public ArrayList<Item> items =new ArrayList<>();
+	public ArrayList<Obstacle> obstacles = new ArrayList<>();
 	
 	public String path;
 	ArrayList<String> packet = new ArrayList<>();
@@ -92,6 +94,12 @@ public class Map {
 				Item Item = new Item(x,y,state);
 				items.add(Item);
 			}
+			if (state == 4 || state == 5) {
+				int x = (i%BLOCK_WIDTH_LENGTH)* Block.BLOCK_WIDTH;
+				int y = (i/BLOCK_WIDTH_LENGTH)* Block.BLOCK_HEIGHT;
+				Obstacle obstacle = new Obstacle(x,y,state);
+				obstacles.add(obstacle);
+			}
 		}
 	}
 	
@@ -103,4 +111,7 @@ public class Map {
 		return items;
 	}
 	
+	public ArrayList getObstacles() {
+		return obstacles;
+	}
 }

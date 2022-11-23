@@ -82,6 +82,8 @@ public class ChattingPanel extends JPanel{
 				//////////////////
 				//// 채팅 보내는 함수
 				//////////////////
+				ChatMsg msg = new ChatMsg(GameClientFrame.userName, GameClientFrame.roomId, "300", text);
+				ListenNetwork.SendObject(msg);
 				chattingInput.setText("");
 			}
 			

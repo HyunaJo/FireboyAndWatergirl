@@ -469,7 +469,7 @@ public class GameServerFrame extends JFrame {
 							}
 						} 
 						else if (cm.code.matches("300")) {
-							obcm = new ChatMsg("SERVER", cm.roomId, "300", "게임을 시작합니다.");
+							obcm = new ChatMsg(cm.getUserName(), cm.roomId, "300", cm.getData());
 							WriteAllObject(cm.roomId, obcm);
 						}
 						else if (cm.code.matches("550")) {

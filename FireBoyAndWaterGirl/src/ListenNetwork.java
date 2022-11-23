@@ -10,8 +10,8 @@ import javax.swing.JOptionPane;
 
 //Server Message를 수신해서 화면에 표시
 public class ListenNetwork extends Thread {
-//	String ip_addr = "127.0.0.1";
-	String ip_addr = "218.159.204.53";
+	String ip_addr = "127.0.0.1";
+	//String ip_addr = "218.159.204.53";
 	int port_no;
 	int roomId;
 	int playerCharacter = 0;
@@ -62,14 +62,14 @@ public class ListenNetwork extends Thread {
 				MovingInfo mi = null;
 				try {
 					obcm = ois.readObject();
-					System.out.println("obcm read success");
+//					System.out.println("obcm read success");
 				} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					break;
 				}
 				if (obcm == null) {
-					System.out.println("obcm is null!");
+//					System.out.println("obcm is null!");
 					break;
 				}
 				if (obcm instanceof ChatMsg) {
@@ -77,7 +77,7 @@ public class ListenNetwork extends Thread {
 					msg = String.format("[%s] %s", cm.getUserName(), cm.getData());
 					System.out.println(msg);
 				}else if (obcm instanceof MovingInfo) {
-					System.out.println("obcm을 제대로 받음");
+//					System.out.println("obcm을 제대로 받음");
 					mi = (MovingInfo) obcm;
 				}
 				else
@@ -153,9 +153,8 @@ public class ListenNetwork extends Thread {
 					}
 				}
 				else if(mi != null) {
-					System.out.println("mi!=null");
 					System.out.println(mi);
-					System.out.println("받은 데이터: "+mi.getPosX()+ mi.getPosY()+ mi.getType());
+//					System.out.println("받은 데이터: "+mi.getPosX()+ mi.getPosY()+ mi.getType());
 					GameClientFrame.gameScreenPane.setMovingInfo(mi.getPosX(), mi.getPosY(), mi.getType());
 					//break;
 				}
