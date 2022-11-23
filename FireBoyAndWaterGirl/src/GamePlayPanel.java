@@ -19,6 +19,17 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	private final int IMG_HEIGHT = 59;
 	private final int RUN_IMG_WIDTH = 68;
 	private final int RUN_IMG_HEIGHT = 61;
+	
+	private final int FIRE_IMG_WIDTH = 48;
+	private final int FIRE_IMG_HEIGHT = 59;
+	private final int FIRE_RUN_IMG_WIDTH = 68;
+	private final int FIRE_RUN_IMG_HEIGHT = 61;
+	
+	private final int WATER_IMG_WIDTH = 48;
+	private final int WATER_IMG_HEIGHT = 59;
+	private final int WATER_RUN_IMG_WIDTH = 68;
+	private final int WATER_RUN_IMG_HEIGHT = 61;
+	
 	int myWidth, myHeight;
 	
 	private Map map;
@@ -41,6 +52,8 @@ public class GamePlayPanel extends JPanel implements Runnable{
    boolean isJumping = false;
    boolean isFalling = false;
    boolean isLand = true;
+   Block touchedBlock = null;
+   int touchedBlockSide = 0; // 위, 아래, 왼, 오
    
    int resetTotalDistance = 90;
    int jumpingTotalDistance = resetTotalDistance;
@@ -227,6 +240,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
     	  break;
       }
       character = imageTool.getImage(myInfo.getCharacterImgPath());
+//	  System.out.println(new ImageIcon(character).getIconWidth()+","+new ImageIcon(character).getIconHeight());
       opponent =  imageTool.getImage(opponentInfo.getCharacterImgPath());
       mainwork=new Thread(this);
       mainwork.start();
@@ -246,7 +260,15 @@ public class GamePlayPanel extends JPanel implements Runnable{
         moveThread.start();
         
         testKey = new KeyAdapter() {
-            @Override
+//        	@Override
+//			public void keyTyped(KeyEvent e) {
+//        		switch(e.getKeyCode()) {
+//				case KeyEvent.VK_RIGHT:
+//					myXpos -= 4;
+//						
+//        		}
+//			}
+        	
             public void keyPressed(KeyEvent e) {
 //            	System.out.println("키가 눌림");
                 switch(e.getKeyCode()) {
@@ -264,10 +286,13 @@ public class GamePlayPanel extends JPanel implements Runnable{
                     	 isMovingLeft = true;
                         break;
                     case KeyEvent.VK_RIGHT:
+                    	if(!isMovingRight)
+                    		myXpos -= 10;
 //                    	 System.out.println("right 키 눌림"); 
                     	 if(isMovingLeft)
                     		 isMovingLeft=false;
                     	 isMovingRight = true;
+                    	 
                         break;
                 }
             }
@@ -276,10 +301,12 @@ public class GamePlayPanel extends JPanel implements Runnable{
             	switch(e.getKeyCode()) {
                 case KeyEvent.VK_RIGHT:
 //                	 System.out.println("right 키 그만 누름"); 
+                	 myXpos += 10;
                 	 isMovingRight = false;
                 	 break;
                 case KeyEvent.VK_LEFT:
 //                	System.out.println("left 키 그만 누름"); 
+                	
                	 	isMovingLeft = false;
                	 	break;
             	}
@@ -340,7 +367,8 @@ public class GamePlayPanel extends JPanel implements Runnable{
     				falling();
     			if(isMovingLeft||isMovingRight)
     				xMoving();
-    			System.out.println(canMove());
+//    			System.out.println(canMove());
+    			System.out.println("============="+myXpos+","+myYpos+"========================================================");
     			MovingInfo obcm = new MovingInfo("400", GameClientFrame.roomId, myXpos, myYpos, GameClientFrame.userNum, myInfo.getState());
     			ListenNetwork.SendObject(obcm);
     			try {
@@ -379,30 +407,58 @@ public class GamePlayPanel extends JPanel implements Runnable{
     		resetTotalJumpDist();
     	}
     	else {
-    		myYpos -= jumpingDist;
-    		jumpingTotalDistance -= jumpingDist;
+    		touchedBlock = canMove(myXpos,myYpos-jumpingDist);
+    		if(touchedBlock==null) {
+    			myYpos -= jumpingDist;
+    			jumpingTotalDistance -= jumpingDist;
+    		}
+    		else {
+    			if(isMovingRight||isMovingLeft)
+    				myYpos = touchedBlock.getY() + touchedBlock.getHeight() - 10;
+    			else
+    				myYpos = touchedBlock.getY() + touchedBlock.getHeight();
+    			resetTotalJumpDist();
+    			isJumping = false;
+    			isFalling = true;
+    		}
     	}
     }
     
     public void falling() {
-    	if(jumpingTotalDistance <= 0) {
-    		isFalling = false;
-    		resetTotalJumpDist();
-    	}
-    	else {
-    		myYpos += fallingDist;
-    		jumpingTotalDistance -= fallingDist;
-    	}
+//    	if(jumpingTotalDistance <= 0) {
+//		isFalling = false;
+////		resetTotalJumpDist();
+//	}
+    	touchedBlock = canMove(myXpos, myYpos + fallingDist);
+		if(touchedBlock==null) {
+			myYpos += fallingDist;
+//			jumpingTotalDistance -= fallingDist;
+		}
+		else {
+			if(isMovingRight||isMovingLeft)
+				myYpos = touchedBlock.getY() - 61;
+			else
+				myYpos = touchedBlock.getY() - 59;
+			isFalling = false;
+//			jumpingTotalDistance = 0;
+		}
     }
     
     public void xMoving() {
     	if(isMovingRight) {
-    		myXpos += xmovingDist;
+    		touchedBlock = canMove(myXpos+xmovingDist,myYpos);
+    		if(touchedBlock==null)
+    			myXpos += xmovingDist;
+//    		else
+//    			myXpos = touchedBlock.getX()-60;
     	}
     	else if(isMovingLeft) {
-    		myXpos -= xmovingDist;
+    		touchedBlock = canMove(myXpos-xmovingDist,myYpos);
+    		if(touchedBlock==null)
+    			myXpos -= xmovingDist;
+//    		else
+//    			myXpos = touchedBlock.getX()+touchedBlock.getWidth();
     	}
-//    	System.out.println(xpos+","+ypos);
     }
     
     public void setMoving(int x, int y, State type) {
@@ -411,39 +467,48 @@ public class GamePlayPanel extends JPanel implements Runnable{
     	opponentYpos = y;
     	opponentInfo.setState(type);
     }
-
-//    public void checkEdgeWalls() {
-//    	switch(myInfo.getState()) {
-//    	case LEFT:
-//    	case RIGHT:
-//    		myWidth = RUN_IMG_WIDTH;
-//    		myHeight = RUN_IMG_HEIGHT;
-//    		break;
-//    	case FRONT:
-//    		myWidth = IMG_WIDTH;
-//    		myHeight = IMG_HEIGHT;
-//    		break;
-//    	}
-//    }
     
-    public boolean canMove() {
+    public Block canMove(int x, int y) {
     	switch(myInfo.getState()) {
     	case LEFT:
     	case RIGHT:
-    		myWidth = RUN_IMG_WIDTH;
-    		myHeight = RUN_IMG_HEIGHT;
+    		if(GameClientFrame.userNum==1) { // fireboy
+    			x += 5;
+    			y += 10;
+    			myWidth = FIRE_RUN_IMG_WIDTH-15-5;
+        		myHeight = FIRE_RUN_IMG_HEIGHT-10-10;
+    		}
+    		else { // watergirl
+    			x += 5;
+    			y += 15;
+    			myWidth = WATER_RUN_IMG_WIDTH-6-10;
+        		myHeight = WATER_RUN_IMG_HEIGHT-10-15;
+    		}
+    		
     		break;
     	case FRONT:
-    		myWidth = IMG_WIDTH;
-    		myHeight = IMG_HEIGHT;
+    		if(GameClientFrame.userNum==1) { // fireboy
+    			x += 5;
+    			y += 10;
+        		myWidth = FIRE_IMG_WIDTH-6-5;
+        		myHeight = FIRE_IMG_HEIGHT-10-10;
+    		}
+    		else { // watergirl
+    			x += 10;
+    			y += 15;
+        		myWidth = WATER_IMG_WIDTH-6-10;
+        		myHeight = WATER_IMG_HEIGHT-10-15;
+    		}
     		break;
     	}
     	
-    	Rectangle characterRec = new Rectangle(myXpos,myYpos,myWidth-5,myHeight-5);
+    	Rectangle characterRec = new Rectangle(x,y,myWidth,myHeight);
 		for(int i=0;i<blocks.size();i++) {
-			if(characterRec.intersects(blocks.get(i).getRectangle()))
-				return false;
+			if(characterRec.intersects(blocks.get(i).getRectangle())) {
+				System.out.println("부딪힘");
+				return blocks.get(i);
+			}
 		}
-		return true;
+		return null;
 	}
 }
