@@ -2,6 +2,7 @@ package MapObject;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -14,6 +15,7 @@ public class Obstacle{ //4는 water obstacle, 5은 fire obstacle
 	private int state;
 	
 	Image img;
+	Rectangle obstacleRec;
 	
 	public ImageIcon resizeImage(ImageIcon icon, int width, int height) {
 		
@@ -31,6 +33,7 @@ public class Obstacle{ //4는 water obstacle, 5은 fire obstacle
 		this.w = ITEM_WIDTH;
 		this.h = ITEM_HEIGHT;
 		this.state = state;
+		this.obstacleRec = new Rectangle(x,y,w,h);
 		setImg();
 	}
 	public void setImg() {
@@ -47,5 +50,6 @@ public class Obstacle{ //4는 water obstacle, 5은 fire obstacle
 	public int getWidth() {return w;}
 	public int getHeight() {return h;}
 	public int getState() {return state;}
+	public Rectangle getRectangle() {return obstacleRec;}
 	
 }

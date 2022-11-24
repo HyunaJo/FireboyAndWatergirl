@@ -68,6 +68,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
    
    Image character;
    Image opponent;
+   Rectangle characterRec;
    
    Image mapImg = imageTool.getImage("src/static/image/background/game_play_background.png");
   
@@ -161,8 +162,8 @@ public class GamePlayPanel extends JPanel implements Runnable{
 				else {
 					
 					System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-					System.out.println("o.getY = "+o.getY());
-					System.out.println("myYpos = "+ (myYpos+pHeight));
+//					System.out.println("o.getY = "+o.getY());
+//					System.out.println("myYpos = "+ (myYpos+pHeight));
 					continue;
 				}
 			}
@@ -260,15 +261,6 @@ public class GamePlayPanel extends JPanel implements Runnable{
         moveThread.start();
         
         testKey = new KeyAdapter() {
-//        	@Override
-//			public void keyTyped(KeyEvent e) {
-//        		switch(e.getKeyCode()) {
-//				case KeyEvent.VK_RIGHT:
-//					myXpos -= 4;
-//						
-//        		}
-//			}
-        	
             public void keyPressed(KeyEvent e) {
 //            	System.out.println("키가 눌림");
                 switch(e.getKeyCode()) {
@@ -321,7 +313,15 @@ public class GamePlayPanel extends JPanel implements Runnable{
     public void paint(Graphics g) {
     	buffImg = createImage(getWidth(),getHeight()); // 버퍼링용 이미지 ( 도화지 )
         buffG = buffImg.getGraphics(); // 버퍼링용 이미지에 그래픽 객체를 얻어야 그릴 수 있다고 한다. ( 붓? )
+        
+        
+        
         update(g);
+        if(characterRec!=null) {
+//        	System.out.println("aaaaaaaaaaaaaaaaaaaa");
+        	g.setColor(Color.YELLOW);
+        	g.drawRect(characterRec.x,characterRec.y,characterRec.width,characterRec.height);
+        }
     }
 
 
@@ -361,13 +361,16 @@ public class GamePlayPanel extends JPanel implements Runnable{
     	public void run() {
     		while(true) {
     			setCharacterImg();
+    			canMove(myXpos,myYpos);
     			if(isJumping)
     				jumping();
-    			if(isFalling)
+    			else {
     				falling();
+    			}
+//    			if(isFalling)
+//    				falling();
     			if(isMovingLeft||isMovingRight)
     				xMoving();
-//    			System.out.println(canMove());
     			System.out.println("============="+myXpos+","+myYpos+"========================================================");
     			MovingInfo obcm = new MovingInfo("400", GameClientFrame.roomId, myXpos, myYpos, GameClientFrame.userNum, myInfo.getState());
     			ListenNetwork.SendObject(obcm);
@@ -407,16 +410,16 @@ public class GamePlayPanel extends JPanel implements Runnable{
     		resetTotalJumpDist();
     	}
     	else {
-    		touchedBlock = canMove(myXpos,myYpos-jumpingDist);
-    		if(touchedBlock==null) {
+//    		touchedBlock = canMove(myXpos,myYpos-jumpingDist);
+    		if(canMove(myXpos,myYpos-jumpingDist/2)==-1) {
     			myYpos -= jumpingDist;
     			jumpingTotalDistance -= jumpingDist;
     		}
     		else {
-    			if(isMovingRight||isMovingLeft)
-    				myYpos = touchedBlock.getY() + touchedBlock.getHeight() - 10;
-    			else
-    				myYpos = touchedBlock.getY() + touchedBlock.getHeight();
+//    			if(isMovingRight||isMovingLeft)
+//    				myYpos = touchedBlock.getY() + touchedBlock.getHeight() - 10;
+//    			else
+//    				myYpos = touchedBlock.getY() + touchedBlock.getHeight();
     			resetTotalJumpDist();
     			isJumping = false;
     			isFalling = true;
@@ -425,39 +428,44 @@ public class GamePlayPanel extends JPanel implements Runnable{
     }
     
     public void falling() {
+    	if(canMove(myXpos, myYpos + fallingDist)==-1) {
+    		myYpos += fallingDist;
+    	}
+    	else {
+    		isFalling = false;
+    	}
 //    	if(jumpingTotalDistance <= 0) {
 //		isFalling = false;
 ////		resetTotalJumpDist();
-//	}
-    	touchedBlock = canMove(myXpos, myYpos + fallingDist);
-		if(touchedBlock==null) {
-			myYpos += fallingDist;
-//			jumpingTotalDistance -= fallingDist;
-		}
-		else {
-			if(isMovingRight||isMovingLeft)
-				myYpos = touchedBlock.getY() - 61;
-			else
-				myYpos = touchedBlock.getY() - 59;
-			isFalling = false;
+//    	}
+//    		touchedBlock = canMove(myXpos, myYpos + fallingDist);
+//    		if(touchedBlock==null) {
+//			
+//			
+//		}
+//		else {
+//			if(isMovingRight||isMovingLeft)
+//				myYpos = touchedBlock.getY() - 61;
+//			else
+//				myYpos = touchedBlock.getY() - 59;
+//			isFalling = false;
+//			isLand = true;
 //			jumpingTotalDistance = 0;
-		}
+//		}
     }
     
     public void xMoving() {
     	if(isMovingRight) {
-    		touchedBlock = canMove(myXpos+xmovingDist,myYpos);
-    		if(touchedBlock==null)
-    			myXpos += xmovingDist;
-//    		else
-//    			myXpos = touchedBlock.getX()-60;
+    		myXpos+=xmovingDist;
+    		if(canMove(myXpos, myYpos)!=-1) {
+    			myXpos -= xmovingDist;
+    		}
     	}
     	else if(isMovingLeft) {
-    		touchedBlock = canMove(myXpos-xmovingDist,myYpos);
-    		if(touchedBlock==null)
-    			myXpos -= xmovingDist;
-//    		else
-//    			myXpos = touchedBlock.getX()+touchedBlock.getWidth();
+    		myXpos-=xmovingDist;
+    		if(canMove(myXpos, myYpos)!=-1) {
+    			myXpos += xmovingDist;
+    		}
     	}
     }
     
@@ -468,47 +476,71 @@ public class GamePlayPanel extends JPanel implements Runnable{
     	opponentInfo.setState(type);
     }
     
-    public Block canMove(int x, int y) {
+    public int canMove(int x, int y) { // 블럭, 장애물의 위=0,아래=1,좌=2,우=3, 어딘가=4
     	switch(myInfo.getState()) {
     	case LEFT:
-    	case RIGHT:
     		if(GameClientFrame.userNum==1) { // fireboy
-    			x += 5;
     			y += 10;
-    			myWidth = FIRE_RUN_IMG_WIDTH-15-5;
-        		myHeight = FIRE_RUN_IMG_HEIGHT-10-10;
+    			myWidth = FIRE_RUN_IMG_WIDTH-45;
+        		myHeight = FIRE_RUN_IMG_HEIGHT-13;
     		}
     		else { // watergirl
-    			x += 5;
-    			y += 15;
-    			myWidth = WATER_RUN_IMG_WIDTH-6-10;
-        		myHeight = WATER_RUN_IMG_HEIGHT-10-15;
+    			y += 10;
+    			myWidth = WATER_RUN_IMG_WIDTH-45;
+        		myHeight = WATER_RUN_IMG_HEIGHT-13;
     		}
-    		
+    		break;
+    	case RIGHT:
+    		if(GameClientFrame.userNum==1) { // fireboy
+    			x += 30;
+    			y += 10;
+    			myWidth = FIRE_RUN_IMG_WIDTH-45;
+        		myHeight = FIRE_RUN_IMG_HEIGHT-13;
+    		}
+    		else { // watergirl
+    			x += 35;
+    			y += 10;
+    			myWidth = WATER_RUN_IMG_WIDTH-45;
+        		myHeight = WATER_RUN_IMG_HEIGHT-13;
+    		}
     		break;
     	case FRONT:
     		if(GameClientFrame.userNum==1) { // fireboy
-    			x += 5;
+    			x += 8;
     			y += 10;
-        		myWidth = FIRE_IMG_WIDTH-6-5;
-        		myHeight = FIRE_IMG_HEIGHT-10-10;
+        		myWidth = FIRE_IMG_WIDTH-30;
+        		myHeight = FIRE_IMG_HEIGHT-13;
     		}
     		else { // watergirl
     			x += 10;
-    			y += 15;
-        		myWidth = WATER_IMG_WIDTH-6-10;
-        		myHeight = WATER_IMG_HEIGHT-10-15;
+    			y += 10;
+        		myWidth = WATER_IMG_WIDTH-30;
+        		myHeight = WATER_IMG_HEIGHT-13;
     		}
     		break;
     	}
     	
-    	Rectangle characterRec = new Rectangle(x,y,myWidth,myHeight);
+    	characterRec = new Rectangle(x,y,myWidth,myHeight);
 		for(int i=0;i<blocks.size();i++) {
 			if(characterRec.intersects(blocks.get(i).getRectangle())) {
-				System.out.println("부딪힘");
-				return blocks.get(i);
+				Block block = blocks.get(i);
+				if(isMovingRight) {
+					if(block.getX()<characterRec.x+characterRec.width && characterRec.x+characterRec.width<block.getX()+block.getWidth())
+						return 3;
+				}
+				return 4;
 			}
 		}
-		return null;
+		for(int i=0;i<obstacles.size();i++) {
+			if(characterRec.intersects(obstacles.get(i).getRectangle())) {
+				Obstacle obstacle = obstacles.get(i);
+				if(isMovingRight) {
+					if(obstacle.getX()<characterRec.x+characterRec.width && characterRec.x+characterRec.width<obstacle.getX()+obstacle.getWidth())
+						return 3;
+				}
+				return 4;
+			}
+		}
+		return -1;
 	}
 }
