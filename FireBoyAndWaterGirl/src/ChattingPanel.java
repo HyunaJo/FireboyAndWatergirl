@@ -35,6 +35,7 @@ public class ChattingPanel extends JPanel{
 		
 		chattingHistory = new JTextPane();
 		chattingHistory.setEditable(true);
+		chattingHistory.setFocusable(false);
 		chattingHistory.setFont(new Font("굴림체", Font.BOLD, 12));
 		chattingHistoryScroll.setViewportView(chattingHistory);
 		
