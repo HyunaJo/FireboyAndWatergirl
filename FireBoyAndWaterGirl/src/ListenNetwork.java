@@ -127,6 +127,10 @@ public class ListenNetwork extends Thread {
 							return;
 						}
 						break;
+					case "200":
+						System.out.println("채팅을 받았다.");
+						ChattingPanel.appendText(cm.getUserName(),cm.getData());
+						break;
 					case "300": // 게임 시작에 대한 응답 -> 게임 플레이화면으로 전환
 						System.out.println("게임 스타트에 대한 응답을 받았다!!!!");
 						GameClientFrame.isChanged = true;

@@ -12,7 +12,7 @@ import javax.swing.JTextPane;
 
 public class ChattingPanel extends JPanel{
 	private JScrollPane chattingHistoryScroll = new JScrollPane();
-	private JTextPane chattingHistory;
+	public static JTextPane chattingHistory;
 	private JTextArea chattingInput;
 	private String name; // player 닉네임
 	
@@ -34,8 +34,8 @@ public class ChattingPanel extends JPanel{
 		add(chattingHistoryScroll);
 		
 		chattingHistory = new JTextPane();
-		chattingHistory.setEditable(false);
-		chattingHistory.setFont(new Font("굴림체", Font.PLAIN, 12));
+		chattingHistory.setEditable(true);
+		chattingHistory.setFont(new Font("굴림체", Font.BOLD, 12));
 		chattingHistoryScroll.setViewportView(chattingHistory);
 		
 		// 채팅 작성해서 보내는 부분
@@ -79,17 +79,30 @@ public class ChattingPanel extends JPanel{
 				sendBtn.setBackground(sendBtnColor);
 				// 채팅 보내기
 				String text = chattingInput.getText();
-				//////////////////
-				//// 채팅 보내는 함수
-				//////////////////
-				ChatMsg msg = new ChatMsg(GameClientFrame.userName, GameClientFrame.roomId, "300", text);
-				ListenNetwork.SendObject(msg);
+				
+				if(GameClientFrame.waitingPlayerNum == 2) { //접속한 사용자가 있을 때 - 네트워크 전송
+					ChatMsg msg = new ChatMsg(GameClientFrame.userName, GameClientFrame.roomId, "200", text);
+					ListenNetwork.SendObject(msg);
+				}
+				
+				appendText(GameClientFrame.userName,text); //본인 채팅팬에 넣기
 				chattingInput.setText("");
+				
 			}
 			
 			public void mouseReleased(MouseEvent e) {
 				sendBtn.setBackground(sendBtnPressedColor);
 			}
 		});
+	}
+	
+	public static void appendText(String userName,String msg) {
+		// textArea.append(msg + "\n");
+		// AppendIcon(icon1);
+		msg = msg.trim(); // 앞뒤 blank와 \n을 제거한다.
+		int len = chattingHistory.getDocument().getLength();
+		// 끝으로 이동
+		chattingHistory.setCaretPosition(len);
+		chattingHistory.replaceSelection("["+userName+"]:"+msg + "\n");
 	}
 }
