@@ -492,13 +492,13 @@ public class GamePlayPanel extends JPanel implements Runnable{
     		break;
     	case RIGHT:
     		if(GameClientFrame.userNum==1) { // fireboy
-    			x += 30;
+    			x += 23;
     			y += 10;
     			myWidth = FIRE_RUN_IMG_WIDTH-45;
         		myHeight = FIRE_RUN_IMG_HEIGHT-13;
     		}
     		else { // watergirl
-    			x += 35;
+    			x += 30;
     			y += 10;
     			myWidth = WATER_RUN_IMG_WIDTH-45;
         		myHeight = WATER_RUN_IMG_HEIGHT-13;
@@ -509,13 +509,13 @@ public class GamePlayPanel extends JPanel implements Runnable{
     			x += 8;
     			y += 10;
         		myWidth = FIRE_IMG_WIDTH-30;
-        		myHeight = FIRE_IMG_HEIGHT-13;
+        		myHeight = FIRE_IMG_HEIGHT-10;
     		}
     		else { // watergirl
     			x += 10;
     			y += 10;
         		myWidth = WATER_IMG_WIDTH-30;
-        		myHeight = WATER_IMG_HEIGHT-13;
+        		myHeight = WATER_IMG_HEIGHT-10;
     		}
     		break;
     	}
