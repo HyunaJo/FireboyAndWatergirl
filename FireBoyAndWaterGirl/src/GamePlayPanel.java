@@ -20,15 +20,15 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	private final int RUN_IMG_WIDTH = 68;
 	private final int RUN_IMG_HEIGHT = 61;
 	
-	private final int FIRE_IMG_WIDTH = 48;
-	private final int FIRE_IMG_HEIGHT = 59;
-	private final int FIRE_RUN_IMG_WIDTH = 68;
-	private final int FIRE_RUN_IMG_HEIGHT = 61;
-	
-	private final int WATER_IMG_WIDTH = 48;
-	private final int WATER_IMG_HEIGHT = 59;
-	private final int WATER_RUN_IMG_WIDTH = 68;
-	private final int WATER_RUN_IMG_HEIGHT = 61;
+//	private final int FIRE_IMG_WIDTH = 48;
+//	private final int FIRE_IMG_HEIGHT = 59;
+//	private final int FIRE_RUN_IMG_WIDTH = 68;
+//	private final int FIRE_RUN_IMG_HEIGHT = 61;
+//	
+//	private final int WATER_IMG_WIDTH = 48;
+//	private final int WATER_IMG_HEIGHT = 59;
+//	private final int WATER_RUN_IMG_WIDTH = 68;
+//	private final int WATER_RUN_IMG_HEIGHT = 61;
 	
 	int myWidth, myHeight;
 	
@@ -51,9 +51,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
    boolean isMovingLeft = false;
    boolean isJumping = false;
    boolean isFalling = false;
-   boolean isLand = true;
-   Block touchedBlock = null;
-   int touchedBlockSide = 0; // 위, 아래, 왼, 오
+   boolean isDie = false;
    
    int resetTotalDistance = 90;
    int jumpingTotalDistance = resetTotalDistance;
@@ -111,17 +109,8 @@ public class GamePlayPanel extends JPanel implements Runnable{
 				Item m = items.get(i);
 				if (!(m.getState()%2 == GameClientFrame.userNum%2)) continue;
 				
-				// [경우1] 플레이어가 아이템의 오른쪽에 존재
-				if (myXpos+pWith >= m.getX() && myXpos+pWith <= m.getX()+0.5*m.getWidth() 
-				&& myYpos <= m.getY() && myYpos+pHeight >= m.getY()+m.getHeight()) {
-					items.remove(m);
-					//TODO:네트워크로 사라진 아이템 인덱스 보내줘야함!!
-					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
-					break;
-				}
-				// [경우2] 플레이어가 아이템의 왼쪽에 존재
-				else if (myXpos >= m.getX() + 0.5*m.getWidth() && myXpos <= m.getX() + m.getWidth()
-				&& myYpos <= m.getY() && myYpos+pHeight >= m.getY()+m.getHeight()) {
+				if(((m.getX()<=myXpos&&myXpos<=m.getX()+m.getWidth())||(m.getX()<=myXpos+myWidth&&myXpos+myWidth<=m.getX()+m.getWidth()))
+						&&((myYpos<=m.getY()&&m.getY()<=myYpos+myHeight)||(myYpos<=m.getY()+m.getHeight()&&m.getY()+m.getHeight()<=myYpos+myHeight))) {
 					items.remove(m);
 					//TODO:네트워크로 사라진 아이템 인덱스 보내줘야함!!
 					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
@@ -143,22 +132,15 @@ public class GamePlayPanel extends JPanel implements Runnable{
 					continue;
 					
 				}
-				
-				// 플레이어가 장애물 위에 올라갔는지 판단!
-				if ((o.getX() <= myXpos && myXpos+IMG_WIDTH <= o.getX()+o.getWidth()) && (o.getY() <= myYpos+IMG_HEIGHT && myYpos+IMG_HEIGHT <= o.getY()+10)) { //&& o.getY() == myYpos + IMG_HEIGHT
-					
-					//TODO:네트워크로 죽었음(게임 오버)을 표시
+				if(((o.getX()<=myXpos+myWidth&&myXpos+myWidth<=o.getX()+o.getWidth())||(o.getX()<=myXpos&&myXpos<=o.getX()+o.getWidth()))&&
+						(o.getY()<=myYpos+myHeight+10&&myYpos+myHeight+10<=o.getY()+o.getHeight())) {
 					System.out.println("1  Game Over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-					//ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
+					isDie = true;
+					character = imageTool.getImage(myInfo.getDieImgPath());
+					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
 					break;
 				}
-				else if (o.getX() <= myXpos && myXpos+RUN_IMG_WIDTH <= o.getX()+o.getWidth() ) {//&& o.getY() == myYpos + RUN_IMG_HEIGHT
 					
-					//TODO:네트워크로 죽었음(게임 오버)을 표시
-					System.out.println("2 Game Over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-					//ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
-					break;
-				}
 				else {
 					
 					System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -319,6 +301,11 @@ public class GamePlayPanel extends JPanel implements Runnable{
         	g.setColor(Color.YELLOW);
         	g.drawRect(characterRec.x,characterRec.y,characterRec.width,characterRec.height);
         }
+        
+        for(int i=0;i<items.size();i++) {
+        	g.setColor(Color.CYAN);
+        	g.drawRect(items.get(i).getX(), items.get(i).getY(), items.get(i).getWidth(), items.get(i).getHeight());
+        }
     }
 
 
@@ -357,6 +344,8 @@ public class GamePlayPanel extends JPanel implements Runnable{
     private class MoveThread extends Thread{
     	public void run() {
     		while(true) {
+    			if(isDie)
+    				break;
     			setCharacterImg();
     			if(isJumping)
     				jumping();
@@ -452,41 +441,41 @@ public class GamePlayPanel extends JPanel implements Runnable{
     	case LEFT:
     		if(GameClientFrame.userNum==1) { // fireboy
     			y += 10;
-    			myWidth = FIRE_RUN_IMG_WIDTH-45;
-        		myHeight = FIRE_RUN_IMG_HEIGHT-17;
+    			myWidth = RUN_IMG_WIDTH-45;
+        		myHeight = RUN_IMG_HEIGHT-17;
     		}
     		else { // watergirl
     			y += 10;
-    			myWidth = WATER_RUN_IMG_WIDTH-45;
-        		myHeight = WATER_RUN_IMG_HEIGHT-17;
+    			myWidth = RUN_IMG_WIDTH-45;
+        		myHeight = RUN_IMG_HEIGHT-17;
     		}
     		break;
     	case RIGHT:
     		if(GameClientFrame.userNum==1) { // fireboy
     			x += 23;
     			y += 10;
-    			myWidth = FIRE_RUN_IMG_WIDTH-45;
-        		myHeight = FIRE_RUN_IMG_HEIGHT-17;
+    			myWidth = RUN_IMG_WIDTH-45;
+        		myHeight = RUN_IMG_HEIGHT-17;
     		}
     		else { // watergirl
     			x += 30;
     			y += 10;
-    			myWidth = WATER_RUN_IMG_WIDTH-45;
-        		myHeight = WATER_RUN_IMG_HEIGHT-17;
+    			myWidth = RUN_IMG_WIDTH-45;
+        		myHeight = RUN_IMG_HEIGHT-17;
     		}
     		break;
     	case FRONT:
     		if(GameClientFrame.userNum==1) { // fireboy
     			x += 8;
     			y += 8;
-        		myWidth = FIRE_IMG_WIDTH-30;
-        		myHeight = FIRE_IMG_HEIGHT-14;
+        		myWidth = IMG_WIDTH-30;
+        		myHeight = IMG_HEIGHT-14;
     		}
     		else { // watergirl
     			x += 10;
     			y += 8;
-        		myWidth = WATER_IMG_WIDTH-30;
-        		myHeight = WATER_IMG_HEIGHT-14;
+        		myWidth = IMG_WIDTH-30;
+        		myHeight = IMG_HEIGHT-14;
     		}
     		break;
     	}

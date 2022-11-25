@@ -6,6 +6,7 @@ public class PlayerInfo {
 	String characterImgPath;
 	String runRightImgPath;
 	String runLeftImgPath;
+	String dieImgPath = "src/static/image/character/die.gif";
 	State type;
 	
 	public PlayerInfo() {
@@ -51,6 +52,10 @@ public class PlayerInfo {
 	public String getRunLeftImgPath() {
 	   return runLeftImgPath;
 	}
+	
+	public String getDieImgPath() {
+		   return dieImgPath;
+		}
 	
 	public State getState() {
 		return type;
