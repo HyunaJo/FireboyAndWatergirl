@@ -20,16 +20,6 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	private final int RUN_IMG_WIDTH = 68;
 	private final int RUN_IMG_HEIGHT = 61;
 	
-//	private final int FIRE_IMG_WIDTH = 48;
-//	private final int FIRE_IMG_HEIGHT = 59;
-//	private final int FIRE_RUN_IMG_WIDTH = 68;
-//	private final int FIRE_RUN_IMG_HEIGHT = 61;
-//	
-//	private final int WATER_IMG_WIDTH = 48;
-//	private final int WATER_IMG_HEIGHT = 59;
-//	private final int WATER_RUN_IMG_WIDTH = 68;
-//	private final int WATER_RUN_IMG_HEIGHT = 61;
-	
 	int myWidth, myHeight;
 	
 	private Map map;
@@ -52,6 +42,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
    boolean isJumping = false;
    boolean isFalling = false;
    boolean isDie = false;
+   boolean isOpponentDie = false;
    
    int resetTotalDistance = 90;
    int jumpingTotalDistance = resetTotalDistance;
@@ -80,7 +71,6 @@ public class GamePlayPanel extends JPanel implements Runnable{
     
     int opponentXpos = 100;
     int opponentYpos = 100;
-
 
     boolean roof=true;//스레드 루프 정보
 
@@ -137,13 +127,12 @@ public class GamePlayPanel extends JPanel implements Runnable{
 					System.out.println("1  Game Over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 					isDie = true;
 					character = imageTool.getImage(myInfo.getDieImgPath());
-					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
+					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.userName,GameClientFrame.roomId,"600","GameOver")); // GameOver 전송
 					break;
 				}
 					
 				else {
-					
-					System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//					System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 //					System.out.println("o.getY = "+o.getY());
 //					System.out.println("myYpos = "+ (myYpos+pHeight));
 					continue;
@@ -161,6 +150,9 @@ public class GamePlayPanel extends JPanel implements Runnable{
              
              pretime=System.currentTimeMillis();
              gameControll();
+             if(isDie || isOpponentDie) { // 죽은 경우 스레드 종료
+            	 break;
+             }
              
              repaint();//화면 리페인트
           
@@ -175,6 +167,8 @@ public class GamePlayPanel extends JPanel implements Runnable{
        {
           e.printStackTrace();
        }
+       
+//       System.out.println("game 종료");
     }
     
     
@@ -297,7 +291,6 @@ public class GamePlayPanel extends JPanel implements Runnable{
         
         update(g);
         if(characterRec!=null) {
-//        	System.out.println("aaaaaaaaaaaaaaaaaaaa");
         	g.setColor(Color.YELLOW);
         	g.drawRect(characterRec.x,characterRec.y,characterRec.width,characterRec.height);
         }
@@ -315,17 +308,20 @@ public class GamePlayPanel extends JPanel implements Runnable{
         buffG.drawImage(mapImg,0,0, this);
         buffG.drawImage(character, myXpos, myYpos, this);
         
-        switch(opponentInfo.getState()) {
-        case LEFT:
-        	opponent = imageTool.getImage(opponentInfo.getRunLeftImgPath());
-        	break;
-        case RIGHT:
-        	opponent = imageTool.getImage(opponentInfo.getRunRightImgPath());
-        	break;
-        case FRONT:
-        	opponent = imageTool.getImage(opponentInfo.getCharacterImgPath());
-        	break;
+        if(!isOpponentDie) {
+        	switch(opponentInfo.getState()) {
+            case LEFT:
+            	opponent = imageTool.getImage(opponentInfo.getRunLeftImgPath());
+            	break;
+            case RIGHT:
+            	opponent = imageTool.getImage(opponentInfo.getRunRightImgPath());
+            	break;
+            case FRONT:
+            	opponent = imageTool.getImage(opponentInfo.getCharacterImgPath());
+            	break;
+            }
         }
+        
         buffG.drawImage(opponent, opponentXpos, opponentYpos, this);
         
         for (Block block : blocks)
@@ -344,7 +340,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
     private class MoveThread extends Thread{
     	public void run() {
     		while(true) {
-    			if(isDie)
+    			if(isDie||isOpponentDie) // 죽은 경우 스레드 종료
     				break;
     			setCharacterImg();
     			if(isJumping)
@@ -354,7 +350,6 @@ public class GamePlayPanel extends JPanel implements Runnable{
     			}
     			if(isMovingLeft||isMovingRight)
     				xMoving();
-    			System.out.println("============="+myXpos+","+myYpos+"========================================================");
     			MovingInfo obcm = new MovingInfo("400", GameClientFrame.roomId, myXpos, myYpos, GameClientFrame.userNum, myInfo.getState());
     			ListenNetwork.SendObject(obcm);
     			try {
@@ -434,6 +429,12 @@ public class GamePlayPanel extends JPanel implements Runnable{
     	opponentXpos = x;
     	opponentYpos = y;
     	opponentInfo.setState(type);
+    }
+    
+    public void setDieImage() {
+    	System.out.println("opponent die Image");
+    	opponent = imageTool.getImage(opponentInfo.getDieImgPath());
+    	isOpponentDie = true;
     }
     
     public boolean canMove(int x, int y) { // 블럭, 장애물의 위=0,아래=1,좌=2,우=3, 어딘가=4

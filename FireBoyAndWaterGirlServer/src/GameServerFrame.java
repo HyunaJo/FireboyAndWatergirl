@@ -437,6 +437,11 @@ public class GameServerFrame extends JFrame {
 							obcm = new ChatMsg(cm.roomId, "550", cm.itemIdx);
 							WriteOtherObject(cm.roomId, obcm);
 						}
+						else if (cm.code.matches("600")) {
+							System.out.println("cm.getData = "+cm.getData());
+							obcm = new ChatMsg(cm.getUserName(), cm.roomId, "600", cm.getData());
+							WriteOtherObject(cm.roomId, obcm);
+						}
 						else if (cm.code.matches("999")) { // logout message 처리
 							Logout();
 							break;

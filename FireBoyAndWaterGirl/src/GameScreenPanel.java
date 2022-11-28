@@ -93,6 +93,10 @@ public class GameScreenPanel extends JPanel{
 		gamePlayPane.setMoving(x, y, type);
 	}
 	
+	public void setDieImage() {
+		gamePlayPane.setDieImage();
+	}
+	
 	
 
 }
