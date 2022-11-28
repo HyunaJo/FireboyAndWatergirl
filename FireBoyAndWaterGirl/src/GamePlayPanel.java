@@ -3,6 +3,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import MapObject.Block;
+import MapObject.Door;
 import MapObject.Item;
 import MapObject.Obstacle;
 
@@ -26,6 +27,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	private ArrayList<Block> blocks = null;
 	public static ArrayList<Item> items = null;
 	public static ArrayList<Obstacle> obstacles = null;
+	public static ArrayList<Door> doors = null;
 	
 	public KeyAdapter testKey;
 	
@@ -183,6 +185,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
       blocks = map.getBlocks();
       items = map.getItems();
       obstacles = map.getObstacles();
+      doors = map.getDoors();
       // 캐릭터 설정
       switch(GameClientFrame.userNum) {
       case 1:
@@ -332,6 +335,10 @@ public class GamePlayPanel extends JPanel implements Runnable{
         
         for (Obstacle obstacle : obstacles)
         	buffG.drawImage(obstacle.getImg(),obstacle.getX(),obstacle.getY(),this);
+        
+        
+        for (Door door : doors)
+        	buffG.drawImage(door.getImg(),door.getX(),door.getY(),this);
        
         g.drawImage(buffImg,0,0,this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. (도화지에 이미지를 출력)
         repaint();
