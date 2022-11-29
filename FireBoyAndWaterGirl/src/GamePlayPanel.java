@@ -153,6 +153,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
              pretime=System.currentTimeMillis();
              gameControll();
              if(isDie || isOpponentDie) { // 죽은 경우 스레드 종료
+            	 Thread.sleep(1000);
             	 break;
              }
              
@@ -163,6 +164,12 @@ public class GamePlayPanel extends JPanel implements Runnable{
                 //루프 실행 시간이 딜레이 시간보다 크다면 게임 속도가 느려지게 된다.
 
              if(status!=4) cnt++;
+          }
+          
+          // GameOverPanel로 이동
+          if(isDie || isOpponentDie) {
+        	  GameClientFrame.isChanged = true; // 화면 변화가 필요함
+        	  GameClientFrame.isGameOverScreen = true; // 게임 대기화면으로 변화
           }
        }
        catch (Exception e)
@@ -302,6 +309,20 @@ public class GamePlayPanel extends JPanel implements Runnable{
     public void update(Graphics g) {
         buffG.clearRect(0, 0, WIDTH, HEIGHT); // 백지화
         buffG.drawImage(mapImg,0,0, this);
+        
+        for (Block block : blocks)
+        	buffG.drawImage(block.getImg(),block.getX(),block.getY(),this);
+        
+        for (Item item : items)
+        	buffG.drawImage(item.getImg(),item.getX(),item.getY(),this);
+        
+        for (Obstacle obstacle : obstacles)
+        	buffG.drawImage(obstacle.getImg(),obstacle.getX(),obstacle.getY(),this);
+        
+        
+        for (Door door : doors)
+        	buffG.drawImage(door.getImg(),door.getX(),door.getY(),this);
+        
         buffG.drawImage(character, myXpos, myYpos, this);
         
         if(!isOpponentDie) {
@@ -320,18 +341,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
         
         buffG.drawImage(opponent, opponentXpos, opponentYpos, this);
         
-        for (Block block : blocks)
-        	buffG.drawImage(block.getImg(),block.getX(),block.getY(),this);
-        
-        for (Item item : items)
-        	buffG.drawImage(item.getImg(),item.getX(),item.getY(),this);
-        
-        for (Obstacle obstacle : obstacles)
-        	buffG.drawImage(obstacle.getImg(),obstacle.getX(),obstacle.getY(),this);
-        
-        
-        for (Door door : doors)
-        	buffG.drawImage(door.getImg(),door.getX(),door.getY(),this);
+       
        
         g.drawImage(buffImg,0,0,this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. (도화지에 이미지를 출력)
         repaint();

@@ -14,6 +14,7 @@ public class GameScreenPanel extends JPanel{
 	private GameWaitPanel gameWaitPane;
 	private GameInfoPanel gameInfoPane;
 	private GamePlayPanel gamePlayPane = null;
+	private GameOverPanel gameOverPane = null;
 
 	public GameScreenPanel(int roomId, String userName) {
 		setSize(GameClientFrame.SCREEN_WIDTH,GameClientFrame.SCREEN_HEIGHT);
@@ -74,6 +75,16 @@ public class GameScreenPanel extends JPanel{
 					setFocusable(true);
 				}
 			});
+		}
+		this.repaint();
+	}
+	
+	public void changeToGameOverPanel() {
+		remove(gamePlayPane);
+		if(gameOverPane == null) {
+			gameOverPane = new GameOverPanel();
+			gameOverPane.setBounds(0, 0, gameOverPane.getWidth(), gameOverPane.getHeight());
+			add(gameOverPane);
 		}
 		this.repaint();
 	}

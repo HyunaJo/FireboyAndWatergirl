@@ -23,6 +23,7 @@ public class GameClientFrame extends JFrame{
 	public static boolean isNextStage;
 	public static boolean isWaitingScreen;
 	public static boolean isPlayingScreen;
+	public static boolean isGameOverScreen;
 	public static int roomId;
 	public static String userName;
 
@@ -117,6 +118,10 @@ public class GameClientFrame extends JFrame{
 		else if (isPlayingScreen) {
 			isPlayingScreen = false;
 			gameScreenPane.changeToPlaypanel();
+		}
+		else if (isGameOverScreen) {
+			isGameOverScreen = true;
+			gameScreenPane.changeToGameOverPanel();
 		}
 	}
 }
