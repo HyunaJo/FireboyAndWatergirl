@@ -239,7 +239,7 @@ public class GameServerFrame extends JFrame {
 			String msg = "[" + UserName + "]님이 퇴장 하였습니다.\n";
 			user_vc.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
 			ChatMsg obcm = new ChatMsg("SERVER",roomId, "999", Integer.toString(getPlayerNum(roomId))+" "+UserName);
-			WriteAllObject(roomId, obcm); // 나를 제외한 다른 User들에게 전송
+			WriteOtherObject(roomId, obcm); // 나를 제외한 다른 User들에게 전송
 			AppendText("사용자 " + "[" + UserName + "] 퇴장. 현재 참가자 수 " + user_vc.size());
 		}
 

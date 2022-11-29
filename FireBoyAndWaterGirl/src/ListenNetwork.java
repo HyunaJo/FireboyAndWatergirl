@@ -28,7 +28,15 @@ public class ListenNetwork extends Thread {
 //	public boolean isLogin = false;
 	private String userName = "";
 	
+	private boolean stop;
+
+	public void setStop(boolean stop) {
+	    this.stop = stop;
+	}
+	
 	public ListenNetwork(String userName,int port_no, int roomId) {
+		
+		this.stop = false;
 		this.userName = userName;
 		this.port_no = port_no;
 		System.out.println(ip_addr);
@@ -53,7 +61,7 @@ public class ListenNetwork extends Thread {
 	
 	public void run() {
 		
-		while (true) {
+		while (!stop) {
 			System.out.println("메시지 대기중...");
 			try {
 				Object obcm = null;
