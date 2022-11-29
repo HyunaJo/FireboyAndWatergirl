@@ -140,9 +140,8 @@ public class ListenNetwork extends Thread {
 						GamePlayPanel.removeItem(cm.getItemIdx());
 						break;
 					case "600":
-//						GamePlayPanel.isDie = true;
-//						System.out.println("Dieeeeeeeeeeeeeeeeeeeeeeeee");
-						GameClientFrame.gameScreenPane.setDieImage();
+						if(cm.getData().equals("GameOver"))
+							GameClientFrame.gameScreenPane.setDieImage();
 						break;
 					case "999":
 						if(GameClientFrame.isWaitingScreen) { // 대기화면에서 상대방이 나간 경우

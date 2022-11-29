@@ -254,7 +254,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
                     	 isMovingLeft = true;
                         break;
                     case KeyEvent.VK_RIGHT:
-                    	if(!isMovingRight)
+                    	if(!isMovingRight&&!(isDie || isOpponentDie))
                     		myXpos -= 10;
 //                    	 System.out.println("right 키 눌림"); 
                     	 if(isMovingLeft)
@@ -268,29 +268,22 @@ public class GamePlayPanel extends JPanel implements Runnable{
             public void keyReleased(KeyEvent e) {
             	switch(e.getKeyCode()) {
                 case KeyEvent.VK_RIGHT:
-//                	 System.out.println("right 키 그만 누름"); 
-                	 myXpos += 10;
+                	 if(!(isDie || isOpponentDie))
+                		myXpos += 10;
                 	 isMovingRight = false;
                 	 break;
                 case KeyEvent.VK_LEFT:
-//                	System.out.println("left 키 그만 누름"); 
-                	
                	 	isMovingLeft = false;
                	 	break;
             	}
 	        }
 	    };
-        // 키 어댑터 ( 키 처리용 )
-//	        addKeyListener();
-
     }
 
     @Override
     public void paint(Graphics g) {
     	buffImg = createImage(getWidth(),getHeight()); // 버퍼링용 이미지 ( 도화지 )
         buffG = buffImg.getGraphics(); // 버퍼링용 이미지에 그래픽 객체를 얻어야 그릴 수 있다고 한다. ( 붓? )
-        
-        
         
         update(g);
         if(characterRec!=null) {
