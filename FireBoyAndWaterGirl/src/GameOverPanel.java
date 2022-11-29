@@ -61,6 +61,9 @@ public class GameOverPanel extends JPanel{
 			public void mousePressed(MouseEvent e) {
 				GameClientFrame.isChanged = true;
 				GameClientFrame.isHomeScreen = true;
+				GameClientFrame.net.exitRoom();
+				GameClientFrame.net.setStop(true);
+				GameClientFrame.net = null;
 			}
 		});
 	}
