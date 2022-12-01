@@ -129,6 +129,9 @@ public class GamePlayPanel extends JPanel implements Runnable{
 					System.out.println("1  Game Over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 					isDie = true;
 					character = imageTool.getImage(myInfo.getDieImgPath());
+					System.out.println("die======================");
+					System.out.println(imageTool.getImage(myInfo.getDieImgPath()));
+					System.out.println(character.toString());
 					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.userName,GameClientFrame.roomId,"600","GameOver")); // GameOver 전송
 					break;
 				}
@@ -186,6 +189,13 @@ public class GamePlayPanel extends JPanel implements Runnable{
       cnt=0;
       delay=17;// 17/1000초 = 58 (프레임/초)
       keybuff=0;
+      
+      isMovingRight = false;
+      isMovingLeft = false;
+      isJumping = false;
+      isFalling = false;
+      isDie = false;
+      isOpponentDie = false;
       
       //맵 설정
       map = new Map("src/resource/map1.txt");
@@ -324,6 +334,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
         	buffG.drawImage(door.getImg(),door.getX(),door.getY(),this);
         
         buffG.drawImage(character, myXpos, myYpos, this);
+        System.out.println("draw character ==> "+character.toString());
         
         if(!isOpponentDie) {
         	switch(opponentInfo.getState()) {
