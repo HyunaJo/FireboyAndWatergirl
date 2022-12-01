@@ -22,6 +22,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	private final int RUN_IMG_HEIGHT = 61;
 	
 	int myWidth, myHeight;
+	int opponentWidth, opponentHeight;
 	
 	private Map map;
 	private ArrayList<Block> blocks = null;
@@ -45,6 +46,9 @@ public class GamePlayPanel extends JPanel implements Runnable{
    boolean isFalling = false;
    boolean isDie = false;
    boolean isOpponentDie = false;
+   boolean isArrive = false;
+   boolean isOpponentArrive = false;
+   boolean isGameClear = false;
    
    int resetTotalDistance = 90;
    int jumpingTotalDistance = resetTotalDistance;
@@ -61,6 +65,8 @@ public class GamePlayPanel extends JPanel implements Runnable{
    Image opponent;
    Rectangle characterRec;
    
+   Image openFireDoorImg = imageTool.getImage("src/static/image/character/fire boy_enter room.gif");
+   Image openWaterDoorImg = imageTool.getImage("src/static/image/character/water girl_enter room.gif");
    Image mapImg = imageTool.getImage("src/static/image/background/game_play_background.png");
   
    // 이미지 버퍼
@@ -84,6 +90,10 @@ public class GamePlayPanel extends JPanel implements Runnable{
 		playerItemGetCheck();
 		//checkBubbleMonster();
 		playerObstacleCheck();
+		System.out.println(items.size());
+		if(items.size()==0) {
+			playerArriveCheck();
+		}
 		//if(!this.threadFlag)
 			//this.gameThread.interrupt();
 	}
@@ -129,21 +139,43 @@ public class GamePlayPanel extends JPanel implements Runnable{
 					System.out.println("1  Game Over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 					isDie = true;
 					character = imageTool.getImage(myInfo.getDieImgPath());
-					System.out.println("die======================");
-					System.out.println(imageTool.getImage(myInfo.getDieImgPath()));
-					System.out.println(character.toString());
 					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.userName,GameClientFrame.roomId,"600","GameOver")); // GameOver 전송
 					break;
 				}
 					
 				else {
-//					System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//					System.out.println("o.getY = "+o.getY());
-//					System.out.println("myYpos = "+ (myYpos+pHeight));
 					continue;
 				}
 			}
 	}
+    
+    public void playerArriveCheck() {
+    	for(int i=0;i<doors.size();i++) {
+    		Door door = doors.get(i);
+    		if(door.getState()%2 == GameClientFrame.userNum%2) { // user가 도착했는지 판단
+    			if(myInfo.getState()==State.FRONT&&(door.getX()<=myXpos&&myXpos<=door.getX()+getWidth())
+    				&& (door.getX()<=myXpos+myWidth&&myXpos+myWidth<=door.getX()+getWidth())
+    				&& (door.getY()<=myYpos&&myYpos<=door.getY()+door.getHeight())) {
+    				isArrive = true;
+    			}
+    			else 
+    			{
+    				isArrive = false;
+    			}
+    		}
+    		else { // opponent가 도착했는지 판단
+    			if(opponentInfo.getState()==State.FRONT&&(door.getX()<=opponentXpos&&opponentXpos<=door.getX()+getWidth())
+        				&& (door.getX()<=opponentXpos+opponentWidth&&opponentXpos+opponentWidth<=door.getX()+getWidth())
+        				&& (door.getY()<=opponentYpos&&opponentYpos<=door.getY()+door.getHeight())) {
+    				isOpponentArrive = true;
+    			}
+    			else
+    			{
+    				isOpponentArrive = false;
+    			}
+    		}
+    	}
+    }
    
     
    // =======================================================================================
@@ -155,7 +187,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
              
              pretime=System.currentTimeMillis();
              gameControll();
-             if(isDie || isOpponentDie) { // 죽은 경우 스레드 종료
+             if(isDie || isOpponentDie || isGameClear) { // 죽은 경우, 클리어한 경우 스레드 종료
             	 Thread.sleep(1000);
             	 break;
              }
@@ -173,6 +205,10 @@ public class GamePlayPanel extends JPanel implements Runnable{
           if(isDie || isOpponentDie) {
         	  GameClientFrame.isChanged = true; // 화면 변화가 필요함
         	  GameClientFrame.isGameOverScreen = true; // 게임 대기화면으로 변화
+          }
+          else if(isGameClear) {
+        	  GameClientFrame.isChanged = true; // 화면 변화가 필요함
+        	  GameClientFrame.isGameClearScreen = true; // 게임 클리어화면으로 변화
           }
        }
        catch (Exception e)
@@ -196,6 +232,9 @@ public class GamePlayPanel extends JPanel implements Runnable{
       isFalling = false;
       isDie = false;
       isOpponentDie = false;
+      isArrive = false;
+      isOpponentArrive = false;
+      isGameClear = false;
       
       //맵 설정
       map = new Map("src/resource/map1.txt");
@@ -271,7 +310,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
                     	 isMovingLeft = true;
                         break;
                     case KeyEvent.VK_RIGHT:
-                    	if(!isMovingRight&&!(isDie || isOpponentDie))
+                    	if(!isMovingRight)
                     		myXpos -= 10;
 //                    	 System.out.println("right 키 눌림"); 
                     	 if(isMovingLeft)
@@ -285,8 +324,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
             public void keyReleased(KeyEvent e) {
             	switch(e.getKeyCode()) {
                 case KeyEvent.VK_RIGHT:
-                	 if(!(isDie || isOpponentDie))
-                		myXpos += 10;
+            		 myXpos += 10;
                 	 isMovingRight = false;
                 	 break;
                 case KeyEvent.VK_LEFT:
@@ -333,26 +371,37 @@ public class GamePlayPanel extends JPanel implements Runnable{
         for (Door door : doors)
         	buffG.drawImage(door.getImg(),door.getX(),door.getY(),this);
         
-        buffG.drawImage(character, myXpos, myYpos, this);
-        System.out.println("draw character ==> "+character.toString());
-        
-        if(!isOpponentDie) {
-        	switch(opponentInfo.getState()) {
-            case LEFT:
-            	opponent = imageTool.getImage(opponentInfo.getRunLeftImgPath());
-            	break;
-            case RIGHT:
-            	opponent = imageTool.getImage(opponentInfo.getRunRightImgPath());
-            	break;
-            case FRONT:
-            	opponent = imageTool.getImage(opponentInfo.getCharacterImgPath());
-            	break;
-            }
+        if(!(isArrive&&isOpponentArrive)) { // 모두 도착 X
+        	buffG.drawImage(character, myXpos, myYpos, this);
+//          System.out.println("draw character ==> "+character.toString());
+          
+          if(!isOpponentDie) {
+          	switch(opponentInfo.getState()) {
+              case LEFT:
+              	opponent = imageTool.getImage(opponentInfo.getRunLeftImgPath());
+              	break;
+              case RIGHT:
+              	opponent = imageTool.getImage(opponentInfo.getRunRightImgPath());
+              	break;
+              case FRONT:
+              	opponent = imageTool.getImage(opponentInfo.getCharacterImgPath());
+              	break;
+              }
+          }
+          
+          buffG.drawImage(opponent, opponentXpos, opponentYpos, this);
         }
-        
-        buffG.drawImage(opponent, opponentXpos, opponentYpos, this);
-        
-       
+        else { // 모두 도착한 경우
+        	for(Door door:doors) {
+        		if(door.getState()%2==0) {
+        			buffG.drawImage(openWaterDoorImg,door.getX(),door.getY(),this);
+        		}
+        		else {
+        			buffG.drawImage(openFireDoorImg,door.getX(),door.getY(),this);
+        		}
+        	}
+        	isGameClear = true;
+        }
        
         g.drawImage(buffImg,0,0,this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. (도화지에 이미지를 출력)
         repaint();
@@ -361,7 +410,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
     private class MoveThread extends Thread{
     	public void run() {
     		while(true) {
-    			if(isDie||isOpponentDie) // 죽은 경우 스레드 종료
+    			if(isDie||isOpponentDie||isGameClear) // 죽은 경우, 게임 클리어한 경우 스레드 종료
     				break;
     			setCharacterImg();
     			if(isJumping)
@@ -446,14 +495,14 @@ public class GamePlayPanel extends JPanel implements Runnable{
     }
     
     public void setMoving(int x, int y, State type) {
-    	System.out.println("setMoving이 불림");
+//    	System.out.println("setMoving이 불림");
     	opponentXpos = x;
     	opponentYpos = y;
     	opponentInfo.setState(type);
     }
     
     public void setDieImage() {
-    	System.out.println("opponent die Image");
+//    	System.out.println("opponent die Image");
     	opponent = imageTool.getImage(opponentInfo.getDieImgPath());
     	isOpponentDie = true;
     }
@@ -461,43 +510,55 @@ public class GamePlayPanel extends JPanel implements Runnable{
     public boolean canMove(int x, int y) { // 블럭, 장애물의 위=0,아래=1,좌=2,우=3, 어딘가=4
     	switch(myInfo.getState()) {
     	case LEFT:
-    		if(GameClientFrame.userNum==1) { // fireboy
+    		if(GameClientFrame.userNum==1) { // 나:fireboy 상대방:watergirl
     			y += 10;
     			myWidth = RUN_IMG_WIDTH-45;
         		myHeight = RUN_IMG_HEIGHT-17;
+        		opponentWidth = RUN_IMG_WIDTH-45;
+        		opponentHeight = RUN_IMG_HEIGHT-17;
     		}
-    		else { // watergirl
+    		else { // 나:watergirl 상대방:fireboy
     			y += 10;
     			myWidth = RUN_IMG_WIDTH-45;
         		myHeight = RUN_IMG_HEIGHT-17;
+        		opponentWidth = RUN_IMG_WIDTH-45;
+        		opponentHeight = RUN_IMG_HEIGHT-17;
     		}
     		break;
     	case RIGHT:
-    		if(GameClientFrame.userNum==1) { // fireboy
+    		if(GameClientFrame.userNum==1) { // 나:fireboy 상대방:watergirl
     			x += 23;
     			y += 10;
     			myWidth = RUN_IMG_WIDTH-45;
         		myHeight = RUN_IMG_HEIGHT-17;
+        		opponentWidth = RUN_IMG_WIDTH-45;
+        		opponentHeight = RUN_IMG_HEIGHT-17;
     		}
-    		else { // watergirl
+    		else { // 나:watergirl 상대방:fireboy
     			x += 30;
     			y += 10;
     			myWidth = RUN_IMG_WIDTH-45;
         		myHeight = RUN_IMG_HEIGHT-17;
+        		opponentWidth = RUN_IMG_WIDTH-45;
+        		opponentHeight = RUN_IMG_HEIGHT-17;
     		}
     		break;
     	case FRONT:
-    		if(GameClientFrame.userNum==1) { // fireboy
+    		if(GameClientFrame.userNum==1) { // 나:fireboy 상대방:watergirl
     			x += 8;
     			y += 8;
         		myWidth = IMG_WIDTH-30;
         		myHeight = IMG_HEIGHT-14;
+        		opponentWidth = IMG_WIDTH-30;
+        		opponentHeight = IMG_HEIGHT-14;
     		}
-    		else { // watergirl
+    		else { // 나:watergirl 상대방:fireboy
     			x += 10;
     			y += 8;
         		myWidth = IMG_WIDTH-30;
         		myHeight = IMG_HEIGHT-14;
+        		opponentWidth = IMG_WIDTH-30;
+        		opponentHeight = IMG_HEIGHT-14;
     		}
     		break;
     	}

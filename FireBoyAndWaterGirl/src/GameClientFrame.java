@@ -24,6 +24,7 @@ public class GameClientFrame extends JFrame{
 	public static boolean isWaitingScreen;
 	public static boolean isPlayingScreen;
 	public static boolean isGameOverScreen;
+	public static boolean isGameClearScreen;
 	public static int roomId;
 	public static String userName;
 
@@ -128,8 +129,13 @@ public class GameClientFrame extends JFrame{
 		}
 		else if (isGameOverScreen) {
 			System.out.println("게임오버 화면으로 바뀌어야해!");
-			isGameOverScreen = true;
+			isGameOverScreen = false;
 			gameScreenPane.changeToGameOverPanel();
+		}
+		else if (isGameClearScreen) {
+			System.out.println("게임클리어 화면으로 바뀌어야해!");
+			isGameClearScreen = false;
+			gameScreenPane.changeToGameClearPanel();
 		}
 	}
 }

@@ -161,7 +161,7 @@ public class ListenNetwork extends Thread {
 					}
 				}
 				else if(mi != null) {
-					System.out.println(mi);
+//					System.out.println(mi);
 //					System.out.println("받은 데이터: "+mi.getPosX()+ mi.getPosY()+ mi.getType());
 					GameClientFrame.gameScreenPane.setMovingInfo(mi.getPosX(), mi.getPosY(), mi.getType());
 					//break;

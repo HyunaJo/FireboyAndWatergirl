@@ -15,6 +15,7 @@ public class GameScreenPanel extends JPanel{
 	private GameInfoPanel gameInfoPane;
 	private GamePlayPanel gamePlayPane = null;
 	private GameOverPanel gameOverPane = null;
+	private GameClearPanel gameClearPane = null;
 
 	public GameScreenPanel(int roomId, String userName) {
 		setSize(GameClientFrame.SCREEN_WIDTH,GameClientFrame.SCREEN_HEIGHT);
@@ -76,7 +77,16 @@ public class GameScreenPanel extends JPanel{
 		this.repaint();
 	}
 	
-
+	public void changeToGameClearPanel() {
+		remove(gamePlayPane);
+		if(gameClearPane == null) {
+			gameClearPane = new GameClearPanel();
+			gameClearPane.setBounds(0, 0, gameClearPane.getWidth(), gameClearPane.getHeight());
+			add(gameClearPane);
+		}
+		this.repaint();
+	}
+	
 	public void changePlayerList() {
 		gameInfoPane.changePlayerList(GameClientFrame.playerNames);
 		this.repaint();
