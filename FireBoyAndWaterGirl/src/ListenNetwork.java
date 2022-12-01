@@ -28,15 +28,7 @@ public class ListenNetwork extends Thread {
 //	public boolean isLogin = false;
 	private String userName = "";
 	
-	private boolean stop;
-
-	public void setStop(boolean stop) {
-	    this.stop = stop;
-	}
-	
 	public ListenNetwork(String userName,int port_no, int roomId) {
-		
-		this.stop = false;
 		this.userName = userName;
 		this.port_no = port_no;
 		System.out.println(ip_addr);
@@ -61,7 +53,7 @@ public class ListenNetwork extends Thread {
 	
 	public void run() {
 		
-		while (!stop) {
+		while (true) {
 			System.out.println("메시지 대기중...");
 			try {
 				Object obcm = null;
@@ -181,7 +173,7 @@ public class ListenNetwork extends Thread {
 					ois.close();
 					oos.close();
 					socket.close();
-
+					GameClientFrame.net = null;
 					break;
 				} catch (Exception ee) {
 					System.out.println("e2");
@@ -196,6 +188,15 @@ public class ListenNetwork extends Thread {
 		ChatMsg obcm = new ChatMsg(this.userName, roomId, "999");
 		System.out.println(obcm.getUserName()+", "+obcm.getRoomId()+", "+obcm.getCode()+", "+obcm.getData());
 		SendObject(obcm);
+		try {
+			ois.close();
+			oos.close();
+			socket.close();
+			GameClientFrame.net = null;
+		} catch (Exception ee) {
+			System.out.println("exitRoom ee");
+		} // catch문 끝
+		this.interrupt();
 	}
 	
 	public static void SendObject(Object ob) { // 서버로 메세지를 보내는 메소드

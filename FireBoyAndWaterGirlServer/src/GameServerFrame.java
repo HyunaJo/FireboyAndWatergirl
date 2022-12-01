@@ -233,14 +233,17 @@ public class GameServerFrame extends JFrame {
 		}
 
 		public void Logout() {
+			System.out.println("LOGOUT 중");
 			GameRoom gameRoom = gameRooms.get(roomId);
 			gameRoom.getUserNameVec().remove(UserName);
 			gameRoom.getUserVec().remove(this);
+			System.out.println(gameRoom.getUserVec().size());
 			String msg = "[" + UserName + "]님이 퇴장 하였습니다.\n";
 			user_vc.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
 			ChatMsg obcm = new ChatMsg("SERVER",roomId, "999", Integer.toString(getPlayerNum(roomId))+" "+UserName);
 			WriteOtherObject(roomId, obcm); // 나를 제외한 다른 User들에게 전송
 			AppendText("사용자 " + "[" + UserName + "] 퇴장. 현재 참가자 수 " + user_vc.size());
+			
 		}
 
 		// 모든 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다.
@@ -401,7 +404,10 @@ public class GameServerFrame extends JFrame {
 						continue;
 					}
 					if(cm != null) {
+						System.out.println("cm 받음=========================");
 						if (cm.code.matches("100")) { // login
+							System.out.println(cm.toString());
+							AppendText("로그인 요청 받음");
 							UserName = cm.UserName;
 							UserStatus = "O"; // Online 상태
 							if(Login(cm.roomId)) { // 로그인 성공시
@@ -443,6 +449,7 @@ public class GameServerFrame extends JFrame {
 							WriteOtherObject(cm.roomId, obcm);
 						}
 						else if (cm.code.matches("999")) { // logout message 처리
+							System.out.println("999 받음");
 							Logout();
 							break;
 						} else { // 300, 500, ... 기타 object는 모두 방송한다.

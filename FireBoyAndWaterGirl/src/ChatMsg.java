@@ -19,6 +19,11 @@ class ChatMsg implements Serializable {
 		this.data = msg;
 	}
 	
+	@Override
+	public String toString() {
+		return "ChatMsg [UserName=" + UserName + ", roomId=" + roomId + ", code=" + code + ", data=" + data + "]";
+	}
+
 	public ChatMsg(int roomId, String code, int itemIdx) {
 		this.roomId = roomId;
 		this.code = code;

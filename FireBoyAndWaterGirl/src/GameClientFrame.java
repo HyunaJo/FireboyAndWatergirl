@@ -53,6 +53,10 @@ public class GameClientFrame extends JFrame{
 		this.setFocusable(true);
 	}
 	
+	public static void interruptNet() {
+		net.interrupt();
+		System.out.println("interrupt");
+	}
 	
 	class GameThread extends Thread{ // 게임 전반적 관리
 		
@@ -81,14 +85,12 @@ public class GameClientFrame extends JFrame{
 	
 
 	static void init() {
-
 		isHomeScreen = false; // 홈화면
 		isGameScreen = false; // 서버 선택 후 입장한 화면
 		isNextStage = false;
 		isChanged = false; // 화면의 변화가 필요한지 여부
 		isWaitingScreen = false; // 대기 화면
 		isPlayingScreen = false; // 게임 중인 화면
-		
 		gameScreenPane = null;
 		playerNames.clear();
 	}
@@ -96,18 +98,22 @@ public class GameClientFrame extends JFrame{
 	public void selectScreen() {
 		if (isHomeScreen) { // 홈화면
 			isHomeScreen = false;
+			init();
 			System.out.println("홈화면으로 바뀌어야해!");
 			setContentPane(new GameIntroPanel());
 		}
 		else if (isGameScreen) { // 대기화면
 			isGameScreen = false;
+			System.out.println("게임 화면으로 바뀌어야해!");
 			if(gameScreenPane == null) {
+				System.out.println("gameScreenPane == null");
 				gameScreenPane = new GameScreenPanel(roomId,userName);
 				setContentPane(gameScreenPane);
 				gameScreenPane.requestFocus();
 				gameScreenPane.setFocusable(true);
 			}
 			else {
+				System.out.println("gameScreenPane != null");
 				gameScreenPane.changeWaitPlayerNum();
 				gameScreenPane.changePlayerList();
 			}
@@ -116,10 +122,12 @@ public class GameClientFrame extends JFrame{
 			isNextStage = false;
 		}
 		else if (isPlayingScreen) {
+			System.out.println("플레이 화면으로 바뀌어야해!");
 			isPlayingScreen = false;
 			gameScreenPane.changeToPlaypanel();
 		}
 		else if (isGameOverScreen) {
+			System.out.println("게임오버 화면으로 바뀌어야해!");
 			isGameOverScreen = true;
 			gameScreenPane.changeToGameOverPanel();
 		}

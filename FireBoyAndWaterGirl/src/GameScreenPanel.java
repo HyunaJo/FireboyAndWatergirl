@@ -24,24 +24,11 @@ public class GameScreenPanel extends JPanel{
 
 		// 게임 대기 화면 (왼쪽)
 		gameWaitPane = new GameWaitPanel();
-//		GamePlayPanel gameWaitPane = new GamePlayPanel();
-//		gameWaitPane.setBounds(0, 0, gameWaitPane.getWidth(), gameWaitPane.getHeight());
 		add(gameWaitPane);
 		
 		gameWaitPane.setBackground(Color.BLACK);
 		
 		changeWaitPlayerNum();
-
-//		addKeyListener(gameWaitPane.testKey);
-//		gameWaitPane.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent e) {
-//				System.out.println("mouse click");
-//				requestFocus();
-//				setFocusable(true);
-//			}
-//		
-//		});
 		
 		// 게임 정보 화면(오른쪽) (서버 정보, 홈버튼, 채팅...)
 		gameInfoPane = new GameInfoPanel();

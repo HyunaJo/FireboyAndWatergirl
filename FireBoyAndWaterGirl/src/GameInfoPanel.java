@@ -51,7 +51,6 @@ public class GameInfoPanel extends JPanel {
 					GameClientFrame.isChanged = true; // 화면 변화가 필요함
 					GameClientFrame.isHomeScreen = true; // 홈 화면으로 변화
 					GameClientFrame.net.exitRoom();
-					GameClientFrame.net.setStop(true);
 					//GameClientFrame.net.interrupt();
 					GameClientFrame.net = null;
 				}
