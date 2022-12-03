@@ -246,27 +246,26 @@ public class GamePlayPanel extends JPanel implements Runnable{
             	 if(stageNum==1) {
             		Thread.sleep(1100);
             		stageNum=2;
-            		buffG.dispose();
             		settingMap();
 					initState();
 					switch(GameClientFrame.userNum) {
 					case 1:
-						myXpos = 30;
+						myXpos = 35;
 						myYpos = 40;
 						  
-						opponentXpos = 65;
-						opponentYpos = 40;
+						opponentXpos = 35;
+						opponentYpos = 130;
 						break;
 					case 2:
-						myXpos = 65;
-						myYpos = 40;
+						myXpos = 35;
+						myYpos = 130;
 						  
-						opponentXpos = 30;
+						opponentXpos = 35;
 						opponentYpos = 40;
 						break;
 					}
             	 }else {
-            		 Thread.sleep(900);
+            		 Thread.sleep(700);
             		 break;
             	 }
              }
@@ -457,20 +456,20 @@ public class GamePlayPanel extends JPanel implements Runnable{
         buffG = buffImg.getGraphics(); // 버퍼링용 이미지에 그래픽 객체를 얻어야 그릴 수 있다고 한다. ( 붓? )
         
         update(g);
-        if(characterRec!=null) {
-        	g.setColor(Color.YELLOW);
-        	g.drawRect(characterRec.x,characterRec.y,characterRec.width,characterRec.height);
-        }
-        
-        for(int i=0;i<obstacles.size();i++) {
-        	g.setColor(Color.CYAN);
-        	g.drawRect(obstacles.get(i).getX()+20, obstacles.get(i).getY(), obstacles.get(i).getWidth()-40, obstacles.get(i).getHeight());
-        }
-        
-        for(int i=0;i<switchBtns.size();i++) {
-        	g.setColor(Color.CYAN);
-        	g.drawRect(switchBtns.get(i).getX(), switchBtns.get(i).getY(), switchBtns.get(i).getWidth(), switchBtns.get(i).getHeight());
-        }
+//        if(characterRec!=null) {
+//        	g.setColor(Color.YELLOW);
+//        	g.drawRect(characterRec.x,characterRec.y,characterRec.width,characterRec.height);
+//        }
+//        
+//        for(int i=0;i<obstacles.size();i++) {
+//        	g.setColor(Color.CYAN);
+//        	g.drawRect(obstacles.get(i).getX()+20, obstacles.get(i).getY(), obstacles.get(i).getWidth()-40, obstacles.get(i).getHeight());
+//        }
+//        
+//        for(int i=0;i<switchBtns.size();i++) {
+//        	g.setColor(Color.CYAN);
+//        	g.drawRect(switchBtns.get(i).getX(), switchBtns.get(i).getY(), switchBtns.get(i).getWidth(), switchBtns.get(i).getHeight());
+//        }
     }
 
 
