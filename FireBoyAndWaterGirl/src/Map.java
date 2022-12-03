@@ -123,15 +123,14 @@ public class Map {
 			if (state == 8) {
 				int x = (i%BLOCK_WIDTH_LENGTH)* Block.BLOCK_WIDTH;
 				int y = (i/BLOCK_WIDTH_LENGTH)* Block.BLOCK_HEIGHT;
-				SwitchBlock switchBlock = new SwitchBlock(x,y,state);
+				SwitchBlock switchBlock = new SwitchBlock(x,y);
 				switchBlocks.add(switchBlock);
 			}
 			if (state == 9) {
-				
 				int heightDiff = Block.BLOCK_HEIGHT - Switch.SWITHCH_HEIGHT;
 				int x = (i%BLOCK_WIDTH_LENGTH)* Block.BLOCK_WIDTH;
 				int y = (i/BLOCK_WIDTH_LENGTH)* Block.BLOCK_HEIGHT;
-				Switch switchBtn = new Switch(x,y+heightDiff,state);
+				Switch switchBtn = new Switch(x,y+heightDiff);
 				switchBtns.add(switchBtn);
 			}
 		}

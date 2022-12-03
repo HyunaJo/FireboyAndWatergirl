@@ -440,7 +440,7 @@ public class GameServerFrame extends JFrame {
 							WriteAllObject(cm.roomId, obcm);
 						}
 						else if (cm.code.matches("550")) {
-							obcm = new ChatMsg(cm.roomId, "550", cm.itemIdx);
+							obcm = new ChatMsg(cm.roomId, "550", cm.objIdx,cm.objType);
 							WriteOtherObject(cm.roomId, obcm);
 						}
 						else if (cm.code.matches("600")) {

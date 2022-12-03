@@ -34,6 +34,12 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	public static ArrayList<SwitchBlock> switchBlocks = null;
 	public static ArrayList<Switch> switchBtns = null;
 	
+	public static boolean isOpponentSwitchOn = false;
+	public static int opponentlastSwitchIdx = -1;
+	
+	public static boolean isMySwitchOn = false;
+	public static int mylastOnSwitchIdx = -1;
+	
 	public KeyAdapter testKey;
 	
    //게임 제어를 위한 변수
@@ -53,6 +59,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
    boolean isArrive = false;
    boolean isOpponentArrive = false;
    boolean isGameClear = false;
+   
    
    int resetTotalDistance = 90;//90;
    int jumpingTotalDistance = resetTotalDistance;
@@ -94,7 +101,8 @@ public class GamePlayPanel extends JPanel implements Runnable{
 		playerItemGetCheck();
 		//checkBubbleMonster();
 		playerObstacleCheck();
-		System.out.println(items.size());
+		//playerOnSwitchCheck();
+//		System.out.println(items.size());
 		if(items.size()==0) {
 			playerArriveCheck();
 		}
@@ -109,6 +117,22 @@ public class GamePlayPanel extends JPanel implements Runnable{
     	items.remove(i);
     }
     
+    public static void switchOn(int i) { // 상대방이 먹은 item 없애기
+    	if (switchBtns != null) {
+    		switchBtns.get(i).setSwitchState(true);
+    		isOpponentSwitchOn = true;
+    		opponentlastSwitchIdx = i;
+    	}
+    }
+    
+    public static void switchOff(int i) { 
+    	if (switchBtns != null) {
+    		switchBtns.get(i).setSwitchState(false);
+    		isOpponentSwitchOn = false;
+    		opponentlastSwitchIdx = -1;
+    	}
+    }
+    
     public void playerItemGetCheck() {
 			for(int i=0;i<items.size();i++) {//Item m : items
 				
@@ -119,12 +143,40 @@ public class GamePlayPanel extends JPanel implements Runnable{
 						&&((myYpos<=m.getY()&&m.getY()<=myYpos+myHeight)||(myYpos<=m.getY()+m.getHeight()&&m.getY()+m.getHeight()<=myYpos+myHeight))) {
 					items.remove(m);
 					//TODO:네트워크로 사라진 아이템 인덱스 보내줘야함!!
-					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
+					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i,"ITEM"));
 					break;
 				}
 				else
 					continue;
 
+			}
+	}
+    
+    public void playerOnSwitchCheck() { 
+			
+    	for(int i=0;i<switchBtns.size();i++) {//Item m : items
+				Switch s = switchBtns.get(i);
+				
+				if (isOpponentSwitchOn && opponentlastSwitchIdx == i) continue;
+				
+				if(characterRec.intersects(s.getRectangle())) {		
+					//TODO:네트워크로 스위치 눌렸다고 보내줘야함
+					//ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
+					s.setSwitchState(true);
+					System.out.println("스위치가 눌렸음");
+					isMySwitchOn = true;
+					mylastOnSwitchIdx = i;
+					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i,"SWITCH_ON"));
+					break;
+				}
+				else if (isMySwitchOn && mylastOnSwitchIdx == i){
+					System.out.println("스위치가 안눌림");
+					isMySwitchOn = false;
+					mylastOnSwitchIdx = -1;
+					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i,"SWITCH_OFF"));
+					s.setSwitchState(false);
+				}
+				
 			}
 	}
     
@@ -249,6 +301,13 @@ public class GamePlayPanel extends JPanel implements Runnable{
       switchBlocks = map.getSwitchBlocks();
       switchBtns = map.getSwitchBtns();
       
+      for(Switch switchBtn:switchBtns) {
+    	  if (switchBlocks.size() != 0) {
+    		  switchBtn.setManageBlock(switchBlocks.get(0));
+    	  }
+      }
+      
+      
       // 캐릭터 설정
       switch(GameClientFrame.userNum) {
       case 1:
@@ -356,6 +415,11 @@ public class GamePlayPanel extends JPanel implements Runnable{
         	g.setColor(Color.CYAN);
         	g.drawRect(items.get(i).getX(), items.get(i).getY(), items.get(i).getWidth(), items.get(i).getHeight());
         }
+        
+        for(int i=0;i<switchBtns.size();i++) {
+        	g.setColor(Color.CYAN);
+        	g.drawRect(switchBtns.get(i).getX(), switchBtns.get(i).getY(), switchBtns.get(i).getWidth(), switchBtns.get(i).getHeight());
+        }
     }
 
 
@@ -377,9 +441,10 @@ public class GamePlayPanel extends JPanel implements Runnable{
         for (Door door : doors)
         	buffG.drawImage(door.getImg(),door.getX(),door.getY(),this);
         
-        for (SwitchBlock switchBlock:switchBlocks)
-        	buffG.drawImage(switchBlock.getImg(),switchBlock.getX(),switchBlock.getY(),this);
-        
+        for (SwitchBlock switchBlock:switchBlocks) {
+        	if (switchBlock.getIsVisible())
+        		buffG.drawImage(switchBlock.getImg(),switchBlock.getX(),switchBlock.getY(),this);
+        }
        
         for (Switch switchBtn: switchBtns) {        	
         	buffG.drawImage(switchBtn.getImg(),switchBtn.getX(),switchBtn.getY(),this);
@@ -436,6 +501,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
     			}
     			if(isMovingLeft||isMovingRight)
     				xMoving();
+    			playerOnSwitchCheck();
     			MovingInfo obcm = new MovingInfo("400", GameClientFrame.roomId, myXpos, myYpos, GameClientFrame.userNum, myInfo.getState());
     			ListenNetwork.SendObject(obcm);
     			try {
@@ -590,6 +656,13 @@ public class GamePlayPanel extends JPanel implements Runnable{
 				return false;
 			}
 		}
+		
+		for(int i=0;i<switchBlocks.size();i++){
+			if (characterRec.intersects(switchBlocks.get(i).getRectangle()) && switchBlocks.get(i).getIsVisible()) {
+				return false;
+			}
+		}
+		
 		return true;
 	}
 }

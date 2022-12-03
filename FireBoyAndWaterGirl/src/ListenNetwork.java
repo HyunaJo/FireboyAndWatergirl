@@ -137,7 +137,14 @@ public class ListenNetwork extends Thread {
 						GameClientFrame.isPlayingScreen = true;
 						break;
 					case "550":
-						GamePlayPanel.removeItem(cm.getItemIdx());
+						if(cm.getObjType().equals("ITEM"))
+							GamePlayPanel.removeItem(cm.getObjIdx());
+						else if (cm.getObjType().equals("SWITCH_ON")) {
+							GamePlayPanel.switchOn(cm.getObjIdx());
+						}
+						else if (cm.getObjType().equals("SWITCH_OFF")) {
+							GamePlayPanel.switchOff(cm.getObjIdx());
+						}
 						break;
 					case "600":
 						if(cm.getData().equals("GameOver"))
