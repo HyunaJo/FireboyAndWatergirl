@@ -25,6 +25,8 @@ public class ListenNetwork extends Thread {
 	public static ObjectInputStream ois;
 	public static ObjectOutputStream oos;
 	
+	private boolean isPlayingGame = false;
+	
 //	public boolean isLogin = false;
 	private String userName = "";
 	
@@ -133,8 +135,10 @@ public class ListenNetwork extends Thread {
 						break;
 					case "300": // 게임 시작에 대한 응답 -> 게임 플레이화면으로 전환
 						System.out.println("게임 스타트에 대한 응답을 받았다!!!!");
+						GameClientFrame.isWaitingScreen = false;
 						GameClientFrame.isChanged = true;
 						GameClientFrame.isPlayingScreen = true;
+						isPlayingGame = true;
 						break;
 					case "550":
 						if(cm.getObjType().equals("ITEM"))
@@ -147,10 +151,13 @@ public class ListenNetwork extends Thread {
 						}
 						break;
 					case "600":
-						if(cm.getData().equals("GameOver"))
+						if(cm.getData().equals("GameOver")) {
 							GameClientFrame.gameScreenPane.setDieImage();
+							isPlayingGame = false;
+						}
 						break;
 					case "999":
+						System.out.println("GameClientFrame.isWaitingScreen => "+GameClientFrame.isWaitingScreen);
 						if(GameClientFrame.isWaitingScreen) { // 대기화면에서 상대방이 나간 경우
 							System.out.println("999 받음 => "+cm.getData());
 							if(cm.getData().split(" ")[0].equals("1")) {
@@ -163,6 +170,20 @@ public class ListenNetwork extends Thread {
 							}
 							GameClientFrame.isChanged = true; // 화면 변화가 필요함
 							GameClientFrame.isGameScreen = true; // 게임 대기화면으로 변화
+						}
+						else if(isPlayingGame){ // 게임 중에 상대방이 나간 경우
+							if(cm.getData().split(" ")[0].equals("1")) {
+								playerCharacter = 1;
+								GameClientFrame.waitingPlayerNum = 1;
+								String exitPlayerName = cm.getData().split(" ")[1];
+								System.out.println(GameClientFrame.playerNames.size());
+								GameClientFrame.gameScreenPane.removePlayerList(exitPlayerName);
+								GameClientFrame.playerNames.remove(exitPlayerName);
+							}
+							JOptionPane.showMessageDialog(null,"상대방이 게임방을 나갔습니다.");
+							exitRoom();
+							GameClientFrame.isChanged = true;
+							GameClientFrame.isHomeScreen = true;
 						}
 						break;
 					}
@@ -187,7 +208,6 @@ public class ListenNetwork extends Thread {
 					break;
 				} // catch문 끝
 			} // 바깥 catch문끝
-
 		}
 	}
 	

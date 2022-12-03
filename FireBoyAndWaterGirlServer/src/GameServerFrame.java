@@ -398,7 +398,7 @@ public class GameServerFrame extends JFrame {
 					} 
 					else if (obcm instanceof MovingInfo) {
 						mi = (MovingInfo)obcm;
-						AppendMovingInfo(mi);
+//						AppendMovingInfo(mi);
 					}
 					else {
 						continue;
