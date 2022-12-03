@@ -15,6 +15,8 @@ import MapObject.Block;
 import MapObject.Door;
 import MapObject.Item;
 import MapObject.Obstacle;
+import MapObject.Switch;
+import MapObject.SwitchBlock;
 
 
 public class Map {
@@ -25,6 +27,8 @@ public class Map {
 	public ArrayList<Item> items =new ArrayList<>();
 	public ArrayList<Obstacle> obstacles = new ArrayList<>();
 	public ArrayList<Door> doors = new ArrayList<>();
+	public ArrayList<SwitchBlock> switchBlocks = new ArrayList<>();
+	public ArrayList<Switch> switchBtns = new ArrayList<>();
 	
 	public String path;
 	ArrayList<String> packet = new ArrayList<>();
@@ -42,6 +46,14 @@ public class Map {
 	
 	public void setItmes(ArrayList<Item> items) {
 		this.items = items;
+	}
+	
+	public void setSwitchBlocks(ArrayList<SwitchBlock> switchBlocks) {
+		this.switchBlocks = switchBlocks;
+	}
+	
+	public void setSwitchBtns(ArrayList<Switch> switchBtns) {
+		this.switchBtns = switchBtns;
 	}
 
 	//map.txt 파일을 읽어 내용을 담은 문자열 배열 생성
@@ -96,17 +108,29 @@ public class Map {
 				Item Item = new Item(x,y,state);
 				items.add(Item);
 			}
-			if (state == 4 || state == 5) {
+			if (state == 4 || state == 5 || state < 0) { // 장애물일 때
 				int x = (i%BLOCK_WIDTH_LENGTH)* Block.BLOCK_WIDTH;
 				int y = (i/BLOCK_WIDTH_LENGTH)* Block.BLOCK_HEIGHT;
 				Obstacle obstacle = new Obstacle(x,y,state);
 				obstacles.add(obstacle);
 			}
-			if (state == 6 || state == 7) {
+			if (state == 6 || state == 7) { // 문일 때
 				int x = (i%BLOCK_WIDTH_LENGTH)* Block.BLOCK_WIDTH;
 				int y = (i/BLOCK_WIDTH_LENGTH)* Block.BLOCK_HEIGHT;
 				Door door = new Door(x,y,state);
 				doors.add(door);
+			}
+			if (state == 8) {
+				int x = (i%BLOCK_WIDTH_LENGTH)* Block.BLOCK_WIDTH;
+				int y = (i/BLOCK_WIDTH_LENGTH)* Block.BLOCK_HEIGHT;
+				SwitchBlock switchBlock = new SwitchBlock(x,y,state);
+				switchBlocks.add(switchBlock);
+			}
+			if (state == 9) {
+				int x = (i%BLOCK_WIDTH_LENGTH)* Block.BLOCK_WIDTH;
+				int y = (i/BLOCK_WIDTH_LENGTH)* Block.BLOCK_HEIGHT;
+				Switch switchBtn = new Switch(x,y,state);
+				switchBtns.add(switchBtn);
 			}
 		}
 	}
@@ -125,5 +149,13 @@ public class Map {
 	
 	public ArrayList getDoors() {
 		return doors;
+	}
+	
+	public ArrayList getSwitchBlocks() {
+		return switchBlocks;
+	}
+	
+	public ArrayList getSwitchBtns() {
+		return switchBtns;
 	}
 }

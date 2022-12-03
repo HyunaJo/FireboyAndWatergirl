@@ -8,10 +8,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 
-public class Obstacle{ //4는 water obstacle, 5은 fire obstacle
+public class SwitchBlock{ //state 8
 	
-	public static final int ITEM_WIDTH = 124;
-	public static final int ITEM_HEIGHT = 32;
+	public static final int ITEM_WIDTH = 93;
+	public static final int ITEM_HEIGHT = 16;
 	private int state;
 	
 	Image img;
@@ -25,9 +25,9 @@ public class Obstacle{ //4는 water obstacle, 5은 fire obstacle
 	int x, y, w, h;
 	
 	
-	public Obstacle() {}
+	public SwitchBlock() {}
 	
-	public Obstacle(int x, int y, int state) {
+	public SwitchBlock(int x, int y, int state) {
 		this.x= x;
 		this.y= y;
 		this.w = ITEM_WIDTH;
@@ -37,13 +37,10 @@ public class Obstacle{ //4는 water obstacle, 5은 fire obstacle
 		setImg();
 	}
 	public void setImg() {
-		if (state < 0) {
-			img = resizeImage(new ImageIcon("src/static/image/elements/poison_obstacle.png"),ITEM_WIDTH,ITEM_HEIGHT).getImage();
+		if (state == 8) {
+			img = resizeImage(new ImageIcon("src/static/image/elements/switch_block2.png"),ITEM_WIDTH,ITEM_HEIGHT).getImage();
 		}
-		else if(state%2==0) { //water obstacle
-			img = resizeImage(new ImageIcon("src/static/image/elements/water_obstacle.png"),ITEM_WIDTH,ITEM_HEIGHT).getImage();
-		}
-		else { // fire obstacle
+		else {
 			img = resizeImage(new ImageIcon("src/static/image/elements/fire_obstacle.png"),ITEM_WIDTH,ITEM_HEIGHT).getImage();
 		}
 	}

@@ -46,8 +46,8 @@ class GameIntroPanel extends JPanel{
 		add(menu);
 
 		
-		//audio = new GameAudio("src/client/static/music/IntroMusic.wav");
-		//audio.audioStart();
+		audio = new GameAudio("src/static/music/IntroMusic.wav");
+		audio.audioStart();
 		
 	}
 	

@@ -6,6 +6,8 @@ import MapObject.Block;
 import MapObject.Door;
 import MapObject.Item;
 import MapObject.Obstacle;
+import MapObject.Switch;
+import MapObject.SwitchBlock;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -29,6 +31,8 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	public static ArrayList<Item> items = null;
 	public static ArrayList<Obstacle> obstacles = null;
 	public static ArrayList<Door> doors = null;
+	public static ArrayList<SwitchBlock> switchBlocks = null;
+	public static ArrayList<Switch> switchBtns = null;
 	
 	public KeyAdapter testKey;
 	
@@ -50,7 +54,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
    boolean isOpponentArrive = false;
    boolean isGameClear = false;
    
-   int resetTotalDistance = 90;
+   int resetTotalDistance = 90;//90;
    int jumpingTotalDistance = resetTotalDistance;
    int jumpingDist = 6;
    int fallingDist = 6;
@@ -125,7 +129,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
 	}
     
     public void playerObstacleCheck() {
-		//플레이어가 무적이 아닐 때만 체크
+		
 			for(int i=0;i<obstacles.size();i++) {//Item m : items
 				
 				Obstacle o = obstacles.get(i);
@@ -237,11 +241,14 @@ public class GamePlayPanel extends JPanel implements Runnable{
       isGameClear = false;
       
       //맵 설정
-      map = new Map("src/resource/map1.txt");
+      map = new Map("src/resource/map2.txt");
       blocks = map.getBlocks();
       items = map.getItems();
       obstacles = map.getObstacles();
       doors = map.getDoors();
+      switchBlocks = map.getSwitchBlocks();
+      switchBtns = map.getSwitchBtns();
+      
       // 캐릭터 설정
       switch(GameClientFrame.userNum) {
       case 1:
@@ -315,8 +322,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
 //                    	 System.out.println("right 키 눌림"); 
                     	 if(isMovingLeft)
                     		 isMovingLeft=false;
-                    	 isMovingRight = true;
-                    	 
+                    	 isMovingRight = true;       	 
                         break;
                 }
             }
@@ -401,6 +407,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
         		}
         	}
         	isGameClear = true;
+
         }
        
         g.drawImage(buffImg,0,0,this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. (도화지에 이미지를 출력)
