@@ -377,6 +377,15 @@ public class GamePlayPanel extends JPanel implements Runnable{
         for (Door door : doors)
         	buffG.drawImage(door.getImg(),door.getX(),door.getY(),this);
         
+        for (SwitchBlock switchBlock:switchBlocks)
+        	buffG.drawImage(switchBlock.getImg(),switchBlock.getX(),switchBlock.getY(),this);
+        
+       
+        for (Switch switchBtn: switchBtns) {        	
+        	buffG.drawImage(switchBtn.getImg(),switchBtn.getX(),switchBtn.getY(),this);
+        }
+        
+        
         if(!(isArrive&&isOpponentArrive)) { // 모두 도착 X
         	buffG.drawImage(character, myXpos, myYpos, this);
 //          System.out.println("draw character ==> "+character.toString());

@@ -127,9 +127,11 @@ public class Map {
 				switchBlocks.add(switchBlock);
 			}
 			if (state == 9) {
+				
+				int heightDiff = Block.BLOCK_HEIGHT - Switch.SWITHCH_HEIGHT;
 				int x = (i%BLOCK_WIDTH_LENGTH)* Block.BLOCK_WIDTH;
 				int y = (i/BLOCK_WIDTH_LENGTH)* Block.BLOCK_HEIGHT;
-				Switch switchBtn = new Switch(x,y,state);
+				Switch switchBtn = new Switch(x,y+heightDiff,state);
 				switchBtns.add(switchBtn);
 			}
 		}
