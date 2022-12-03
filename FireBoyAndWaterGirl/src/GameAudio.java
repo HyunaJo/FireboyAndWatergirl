@@ -23,6 +23,7 @@ public class GameAudio {
 			AudioInputStream audioStream1 = AudioSystem.getAudioInputStream(audioFile);
 			backgroundMusic.open(audioStream1);
 			
+			
 			gamePlayMusic = AudioSystem.getClip();
 			audioFile = new File("src/static/music/gamePlayMusic.wav");
 			AudioInputStream audioStream2 = AudioSystem.getAudioInputStream(audioFile);
@@ -43,10 +44,12 @@ public class GameAudio {
 		case "background":
 			backgroundMusic.setFramePosition(0);
 			backgroundMusic.start();
+			backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
 			break;
 		case "gamePlay":
 			gamePlayMusic.setFramePosition(0);
 			gamePlayMusic.start();
+			gamePlayMusic.loop(Clip.LOOP_CONTINUOUSLY);
 			break;
 		}
 	}
