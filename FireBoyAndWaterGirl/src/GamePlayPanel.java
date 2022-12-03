@@ -317,6 +317,14 @@ public class GamePlayPanel extends JPanel implements Runnable{
         doors = map.getDoors();
         switchBlocks = map.getSwitchBlocks();
         switchBtns = map.getSwitchBtns();
+        
+        for(Switch switchBtn:switchBtns) {
+      	  System.out.println("들어오긴한다!!!");
+      	  if (switchBlocks.size() != 0) {
+      		  System.out.println("여기다!!!");
+      		  switchBtn.setManageBlock(switchBlocks.get(0));
+      	  }
+        }
     }
     
     public void initState() {
@@ -343,7 +351,9 @@ public class GamePlayPanel extends JPanel implements Runnable{
       settingMap();
       
       for(Switch switchBtn:switchBtns) {
+    	  System.out.println("들어오긴한다!!!");
     	  if (switchBlocks.size() != 0) {
+    		  System.out.println("여기다!!!");
     		  switchBtn.setManageBlock(switchBlocks.get(0));
     	  }
       }
