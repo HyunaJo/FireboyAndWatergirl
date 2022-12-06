@@ -10,9 +10,9 @@ import javax.swing.JOptionPane;
 
 //Server Message를 수신해서 화면에 표시
 public class ListenNetwork extends Thread {
-//	String ip_addr = "127.0.0.1";
+	String ip_addr = "127.0.0.1";
 	//String ip_addr = "218.159.204.53";
-	String ip_addr = "192.168.35.87";
+//	String ip_addr = "192.168.35.87";
 	int port_no;
 	int roomId;
 	int playerCharacter = 0;
@@ -26,7 +26,7 @@ public class ListenNetwork extends Thread {
 	public static ObjectInputStream ois;
 	public static ObjectOutputStream oos;
 	
-	private boolean isPlayingGame = false;
+	public static boolean isPlayingGame = false;
 	
 //	public boolean isLogin = false;
 	private String userName = "";
@@ -159,6 +159,7 @@ public class ListenNetwork extends Thread {
 						break;
 					case "999":
 						System.out.println("GameClientFrame.isWaitingScreen => "+GameClientFrame.isWaitingScreen);
+						System.out.println("isPlayingGame = "+isPlayingGame);
 						if(GameClientFrame.isWaitingScreen) { // 대기화면에서 상대방이 나간 경우
 							System.out.println("999 받음 => "+cm.getData());
 							if(cm.getData().split(" ")[0].equals("1")) {
@@ -192,13 +193,15 @@ public class ListenNetwork extends Thread {
 				else if(mi != null) {
 //					System.out.println(mi);
 //					System.out.println("받은 데이터: "+mi.getPosX()+ mi.getPosY()+ mi.getType());
-					GameClientFrame.gameScreenPane.setMovingInfo(mi.getPosX(), mi.getPosY(), mi.getType());
+					if(GameClientFrame.gameScreenPane!=null)
+						GameClientFrame.gameScreenPane.setMovingInfo(mi.getPosX(), mi.getPosY(), mi.getType());
 					//break;
 				}
 			} catch (IOException e) {
 				//AppendText("ois.readObject() error");
 				try {
 					System.out.println("e1");
+					e.printStackTrace();
 					ois.close();
 					oos.close();
 					socket.close();

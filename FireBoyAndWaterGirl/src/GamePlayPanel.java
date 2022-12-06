@@ -186,6 +186,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
 						(o.getY()<=myYpos+myHeight+15&&myYpos+myHeight+10<=o.getY()+o.getHeight())) {
 					System.out.println("1  Game Over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 					isDie = true;
+					GameClientFrame.net.isPlayingGame = false;
 					character = imageTool.getImage(myInfo.getDieImgPath());
 					ListenNetwork.SendObject(new ChatMsg(GameClientFrame.userName,GameClientFrame.roomId,"600","GameOver")); // GameOver 전송
 					break;
@@ -286,6 +287,7 @@ public class GamePlayPanel extends JPanel implements Runnable{
           }
           else if(isGameClear) {
         	  moveThread.interrupt();
+        	  GameClientFrame.net.isPlayingGame = false;
         	  GameClientFrame.isChanged = true; // 화면 변화가 필요함
         	  GameClientFrame.isGameClearScreen = true; // 게임 클리어화면으로 변화
           }
