@@ -10,6 +10,8 @@
 > 초기화면
 <img width="740" alt="초기화면" src="https://github.com/HyunaJo/FireboyAndWatergirl/assets/86238720/34170513-cde2-4df9-9cc3-41d7b05db1d0">
 
+<br><br>
+
 
 > 참석자 대기 화면
 
