@@ -15,3 +15,6 @@
 
 > 참석자 대기 화면
 
+
+https://github.com/HyunaJo/FireboyAndWatergirl/assets/86238720/63f7b4ff-f4ac-4979-a60b-f4ad761e8f03
+
