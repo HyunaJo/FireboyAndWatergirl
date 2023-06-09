@@ -18,3 +18,17 @@
 
 https://github.com/HyunaJo/FireboyAndWatergirl/assets/86238720/63f7b4ff-f4ac-4979-a60b-f4ad761e8f03
 
+
+<br><br>
+
+
+> 게임 화면 (map 1)
+
+https://github.com/HyunaJo/FireboyAndWatergirl/assets/86238720/827146de-aa30-41d5-a2b2-cc86e6c49d31
+
+<br><br>
+
+
+> 게임 화면 (map 2)
+
+https://github.com/HyunaJo/FireboyAndWatergirl/assets/86238720/df4f6808-b190-47f0-bc31-25b83e6bef62
