@@ -16,7 +16,7 @@
 > 참석자 대기 화면
 
 
-https://github.com/HyunaJo/FireboyAndWatergirl/assets/86238720/63f7b4ff-f4ac-4979-a60b-f4ad761e8f03
+![초기화면gif](https://github.com/HyunaJo/FireboyAndWatergirl/assets/86238720/f3ab1b4b-ca15-47e1-a26d-1804f05aa664)
 
 
 <br><br>
